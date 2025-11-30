@@ -1,0 +1,36 @@
+{
+  "name": "express_me",
+  "version": "1.0.0",
+  "description": "express app with self relearning",
+  "homepage": "https://github.com/p0ngz/express_project#readme",
+  "bugs": {
+    "url": "https://github.com/p0ngz/express_project/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/p0ngz/express_project.git"
+  },
+  "license": "ISC",
+  "author": "Nae Pongsatorn Tassaro",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mongoose": "^8.20.0",
+    "multer": "^2.0.2",
+    "nanoid": "^5.1.6",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}

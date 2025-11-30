@@ -1,0 +1,80 @@
+const mongoose = require("mongoose");
+
+const userSchema = new mongoose.Schema({
+  // Required fields - User must provide
+  username: {
+    type: String,
+    required: [true, "Username is required"],
+    unique: true,
+    trim: true,
+    min: [5, "Username must be at least 5 characters"],
+    max: [10, "Username must be at most 10 characters"],
+    match: [
+      /^(?=.*[A-Z])[A-Za-z0-9]{5,10}$/,
+      "Username must be 5-10 characters, contain at least one uppercase letter, and only letters and digits",
+    ],
+  },
+  email: {
+    type: String,
+    required: [true, "Email is required"],
+    unique: true,
+    lowercase: true,
+    trim: true,
+    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email address"],
+  },
+  password: {
+    type: String,
+    required: [true, "Password is required"],
+    min: [5, "Password must be at least 5 characters"],
+    max: [100, "Password must be at most 100 characters"], // Allow for hashed passwords
+  },
+
+  // System fields - With defaults
+  role: {
+    type: String,
+    enum: ["customer", "admin", "seller"],
+    default: "customer",
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+
+  // Optional profile information - No defaults
+  information: {
+    userImage: {
+      type: String,
+    },
+    firstName: {
+      type: String,
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      trim: true,
+    },
+    address: {
+      type: String,
+      trim: true,
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+    },
+    birthDate: {
+      type: Date,
+    },
+    phone: {
+      type: String,
+      trim: true,
+    },
+  },
+});
+
+const User = mongoose.model("User", userSchema);
+
+module.exports = { User };
