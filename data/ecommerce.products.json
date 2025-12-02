@@ -1,0 +1,349 @@
+[{
+  "_id": {
+    "$oid": "692945d6457fa0a0cc029a2a"
+  },
+  "productName": "Dainty Chain Bracelet",
+  "productImg": "uploads/products/bracelet2_1764321889507_.webp",
+  "typeProduct": "bracelet",
+  "rating": 4.5,
+  "sellingAmount": 214,
+  "color": [
+    "gold",
+    "silver"
+  ],
+  "description": "4 Curabitur egestas malesuada volutpat. Nunc vel vestibulum odio, ac pellentesque lacus. Pellentesque dapibus nunc nec estimperdiet, a malesuada sem rutrum",
+  "inStock": 75,
+  "discount": 15,
+  "size": [
+    "S",
+    "M",
+    "L"
+  ],
+  "price": 100,
+  "createdAt": {
+    "$date": "2025-11-30T03:32:19.342Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6929479a457fa0a0cc029a36"
+  },
+  "productID": "PROD-001",
+  "productName": "Aurora Diamond Ring",
+  "productImg": "https://picsum.photos/seed/aurora-ring/800",
+  "typeProduct": "ring",
+  "rating": 4.6,
+  "sellingAmount": 472,
+  "color": [
+    "gold",
+    "silver"
+  ],
+  "description": "Elegant diamond ring with a minimalist halo setting.",
+  "inStock": 120,
+  "discount": 10,
+  "size": [
+    "S",
+    "M",
+    "L"
+  ],
+  "price": 299.99,
+  "createdAt": {
+    "$date": "2025-11-30T03:32:19.342Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6929479a457fa0a0cc029a37"
+  },
+  "productID": "PROD-002",
+  "productName": "Luna Pearl Necklace",
+  "productImg": "https://picsum.photos/seed/luna-necklace/800",
+  "typeProduct": "necklace",
+  "rating": 4.8,
+  "sellingAmount": 358,
+  "color": [
+    "silver",
+    "rose-gold"
+  ],
+  "description": "Classic freshwater pearl necklace with sterling chain.",
+  "inStock": 80,
+  "discount": 5,
+  "size": [],
+  "price": 189,
+  "createdAt": {
+    "$date": "2025-11-30T03:32:19.342Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6929479a457fa0a0cc029a38"
+  },
+  "productID": "PROD-003",
+  "productName": "Stellar Hoop Earrings",
+  "productImg": "https://picsum.photos/seed/stellar-earrings/800",
+  "typeProduct": "earring",
+  "rating": 4.4,
+  "sellingAmount": 291,
+  "color": [
+    "gold"
+  ],
+  "description": "Lightweight hoops with high-polish finish.",
+  "inStock": 200,
+  "discount": 0,
+  "size": [],
+  "price": 59.99,
+  "createdAt": {
+    "$date": "2025-11-30T03:32:19.342Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6929479a457fa0a0cc029a39"
+  },
+  "productID": "PROD-004",
+  "productName": "Cascade Tennis Bracelet",
+  "productImg": "https://picsum.photos/seed/cascade-bracelet/800",
+  "typeProduct": "bracelet",
+  "rating": 4.7,
+  "sellingAmount": 167,
+  "color": [
+    "silver"
+  ],
+  "description": "CZ-studded tennis bracelet with secure clasp.",
+  "inStock": 65,
+  "discount": 15,
+  "size": [
+    "M",
+    "L"
+  ],
+  "price": 249.5,
+  "createdAt": {
+    "$date": "2025-11-30T03:32:19.342Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6929479a457fa0a0cc029a3a"
+  },
+  "productID": "PROD-005",
+  "productName": "Solitaire Promise Ring",
+  "productImg": "https://picsum.photos/seed/solitaire-ring/800",
+  "typeProduct": "ring",
+  "rating": 4.3,
+  "sellingAmount": 403,
+  "color": [
+    "rose-gold",
+    "gold"
+  ],
+  "description": "Timeless solitaire with round brilliant cut stone.",
+  "inStock": 150,
+  "discount": 0,
+  "size": [
+    "S",
+    "M",
+    "L",
+    "XL"
+  ],
+  "price": 139.95,
+  "createdAt": {
+    "$date": "2025-11-30T03:32:19.342Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6929479a457fa0a0cc029a3b"
+  },
+  "productID": "PROD-006",
+  "productName": "Serene Bar Necklace",
+  "productImg": "https://picsum.photos/seed/serene-bar/800",
+  "typeProduct": "necklace",
+  "rating": 4.2,
+  "sellingAmount": 232,
+  "color": [
+    "gold",
+    "silver"
+  ],
+  "description": "Minimal bar pendant perfect for layering.",
+  "inStock": 110,
+  "discount": 0,
+  "size": [],
+  "price": 89,
+  "createdAt": {
+    "$date": "2025-11-30T03:32:19.342Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6929479a457fa0a0cc029a3c"
+  },
+  "productID": "PROD-007",
+  "productName": "Opal Drop Earrings",
+  "productImg": "https://picsum.photos/seed/opal-drop/800",
+  "typeProduct": "earring",
+  "rating": 4.6,
+  "sellingAmount": 315,
+  "color": [
+    "rose-gold"
+  ],
+  "description": "Synthetic opal drops that shimmer with movement.",
+  "inStock": 95,
+  "discount": 10,
+  "size": [],
+  "price": 79,
+  "createdAt": {
+    "$date": "2025-11-30T03:32:19.342Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6929479a457fa0a0cc029a3d"
+  },
+  "productID": "PROD-008",
+  "productName": "Cuban Link Bracelet",
+  "productImg": "https://picsum.photos/seed/cuban-link/800",
+  "typeProduct": "bracelet",
+  "rating": 4.1,
+  "sellingAmount": 198,
+  "color": [
+    "gold"
+  ],
+  "description": "Chunky Cuban link bracelet with secure box clasp.",
+  "inStock": 70,
+  "discount": 0,
+  "size": [
+    "M",
+    "L"
+  ],
+  "price": 129,
+  "createdAt": {
+    "$date": "2025-11-30T03:32:19.342Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6929479a457fa0a0cc029a3e"
+  },
+  "productID": "PROD-009",
+  "productName": "Twist Band Ring",
+  "productImg": "https://picsum.photos/seed/twist-band/800",
+  "typeProduct": "ring",
+  "rating": 4,
+  "sellingAmount": 256,
+  "color": [
+    "silver"
+  ],
+  "description": "Interwoven band design with subtle texture.",
+  "inStock": 140,
+  "discount": 5,
+  "size": [
+    "S",
+    "M",
+    "L"
+  ],
+  "price": 49.99,
+  "createdAt": {
+    "$date": "2025-11-30T03:32:19.342Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6929479a457fa0a0cc029a3f"
+  },
+  "productID": "PROD-010",
+  "productName": "Moonlight Pendant Necklace",
+  "productImg": "https://picsum.photos/seed/moonlight-pendant/800",
+  "typeProduct": "necklace",
+  "rating": 4.5,
+  "sellingAmount": 341,
+  "color": [
+    "silver"
+  ],
+  "description": "Domed pendant with mirror-like shine.",
+  "inStock": 100,
+  "discount": 20,
+  "size": [],
+  "price": 159,
+  "createdAt": {
+    "$date": "2025-11-30T03:32:19.342Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6929479a457fa0a0cc029a41"
+  },
+  "productID": "PROD-012",
+  "productName": "Beaded Charm Bracelet",
+  "productImg": "https://picsum.photos/seed/beaded-charm/800",
+  "typeProduct": "bracelet",
+  "rating": 4.2,
+  "sellingAmount": 227,
+  "color": [
+    "rose-gold",
+    "silver"
+  ],
+  "description": "Adjustable bracelet with removable charm.",
+  "inStock": 85,
+  "discount": 12,
+  "size": [
+    "S",
+    "M"
+  ],
+  "price": 69.99,
+  "createdAt": {
+    "$date": "2025-11-30T03:32:19.342Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "692965e80655d074057d9d91"
+  },
+  "productName": "Butterfly Ring",
+  "productImg": "/uploads/products/ring1_1764320744835_.webp",
+  "typeProduct": "ring",
+  "rating": 0,
+  "sellingAmount": 145,
+  "color": [
+    "gray"
+  ],
+  "description": "2 Curabitur egestas malesuada volutpat. Nunc vel vestibulum odio, ac pellentesque lacus. Pellentesque dapibus nunc nec estimperdiet, a malesuada sem rutrum",
+  "inStock": 100,
+  "discount": 5,
+  "size": [
+    "L",
+    "XL"
+  ],
+  "price": 40,
+  "createdAt": {
+    "$date": "2025-11-28T09:05:44.875Z"
+  },
+  "productID": "PROD-013",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692966dea5225e24355bd3bd"
+  },
+  "productName": "Dainty Chain Bracelet",
+  "productImg": "/uploads/products/bracelet2_1764486435310_.webp",
+  "typeProduct": "bracelet",
+  "rating": 4.5,
+  "sellingAmount": 189,
+  "color": [
+    "gold",
+    "silver"
+  ],
+  "description": "4 Curabitur egestas malesuada volutpat. Nunc vel vestibulum odio, ac pellentesque lacus. Pellentesque dapibus nunc nec estimperdiet, a malesuada sem rutrum",
+  "inStock": 75,
+  "discount": 15,
+  "size": [
+    "S",
+    "M",
+    "L"
+  ],
+  "price": 100,
+  "createdAt": {
+    "$date": "2025-11-28T09:09:50.062Z"
+  },
+  "productID": "PROD-018",
+  "__v": 0
+}]

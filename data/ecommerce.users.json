@@ -1,0 +1,61 @@
+[{
+  "_id": {
+    "$oid": "692610e1576ff2723c1da0d2"
+  },
+  "username": "P0ngzzz",
+  "email": "pongsatornnae@gmail.com",
+  "password": "$2b$10$bh8Sc8HMbuH9wPeoWT.o8.teON5eYAiUHV7W5pnW40h9bjYWLKFve",
+  "createdAt": {
+    "$date": "2025-11-25T20:26:09.267Z"
+  },
+  "__v": 0,
+  "information": {
+    "userImage": "/uploads/users/nae_1764308512978_.jpg",
+    "firstName": "Pongsatorn",
+    "lastName": "Tassaro",
+    "address": "366/1 soi krungthonburi 6, BanglumpuLang Krongsarn Bangkok",
+    "gender": "male",
+    "birthDate": {
+      "$date": "1995-05-17T00:00:00.000Z"
+    },
+    "phone": "0935791490"
+  },
+  "isActive": true,
+  "role": "customer"
+},
+{
+  "_id": {
+    "$oid": "6926112d576ff2723c1da0d8"
+  },
+  "username": "Nuthawadee",
+  "email": "nathwadee@gmail.com",
+  "password": "$2b$10$tWA7ej/cO1dnXMwE.A2La.a3d2raMunMM4i8Aga4qkSrSTn7LpUAy",
+  "createdAt": {
+    "$date": "2025-11-25T20:27:25.386Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6926117b612b66f266bffa46"
+  },
+  "username": "Pongsatorn",
+  "email": "naeza12345@gmail.com",
+  "password": "$2b$10$3kAV8UR71v9vNiiMVsUz0elxw9BK.6ZCT6DKksX8Cs6YL0wrp/zxi",
+  "createdAt": {
+    "$date": "2025-11-25T20:28:43.877Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692759d2b57c82e4b7b3927b"
+  },
+  "username": "LvLasterda",
+  "email": "lvlasterda@gmail.com",
+  "password": "$2b$10$wYquSvNUHqDn6sTNPHY03upp7TuNTkxpXLU9Z8t7HA9EyhMso8X7q",
+  "createdAt": {
+    "$date": "2025-11-26T19:49:38.844Z"
+  },
+  "__v": 0
+}]

@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const { nanoid } = require("nanoid");
-const { generateID } = require("../utils/generateID");
+const { generateID } = require("../utils/generateID.js");
+const { User } = require("./User.js");
+const { Product } = require("./Product.js");
+
 const orderSchema = new mongoose.Schema({
   orderID: { type: String, unique: true },
   userID: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -10,7 +13,13 @@ const orderSchema = new mongoose.Schema({
   },
   totalItem: { type: Number, required: true, min: 1 },
   detail: [
+    // in mongoose always generate _id for subDocument array
     {
+      product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: true,
+      },
       productID: { type: String, required: true },
       productName: { type: String, required: true },
       productImg: { type: String },
@@ -23,7 +32,7 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         default: 0,
       },
-      size: { type: String },
+      size: { type: String, enum: ["S", "M", "L", "XL"] },
       color: { type: String },
       price: { type: Number, required: true, min: 0 },
     },
@@ -31,7 +40,7 @@ const orderSchema = new mongoose.Schema({
   deliverAddress: { type: String, required: true },
   status: {
     pass: {
-      type: Array,
+      type: [String],
       enum: ["orderPlaced", "processing", "shipped", "delivered"],
       default: ["orderPlaced"],
     },
@@ -45,12 +54,12 @@ const orderSchema = new mongoose.Schema({
   shippingPrice: {
     type: Number,
     min: 0,
-    default: 0
+    default: 0,
   },
   taxPrice: {
     type: Number,
     min: 0,
-    default: 0
+    default: 0,
   },
   discount: {
     percent: { type: Number, default: 0, min: 0, max: 100 },

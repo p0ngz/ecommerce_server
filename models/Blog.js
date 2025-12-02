@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { generateID } = require("../utils/generateID");
 const blogSchema = new mongoose.Schema({
   blogID: {
-    type: Number,
+    type: String,
     unique: true,
   },
   blogName: {

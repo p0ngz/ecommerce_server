@@ -1,0 +1,92 @@
+[
+  {
+    "blogID": "BLOG-0001",
+    "blogName": "The Ultimate Guide to Diamond Cuts",
+    "blogImg": "https://picsum.photos/seed/blog-diamond/1200/800",
+    "blogTitle": "Understanding Diamond Cuts: What Makes Them Sparkle",
+    "blogType": "jewelry",
+    "description": "Discover the art and science behind diamond cuts. From brilliant rounds to elegant emeralds, learn how cut quality affects a diamond's sparkle, fire, and overall beauty. This comprehensive guide covers the 4Cs with a deep dive into why cut is considered the most important factor in a diamond's appearance.",
+    "createdAt": { "$date": "2025-11-15T08:30:00.000Z" }
+  },
+  {
+    "blogID": "BLOG-0002",
+    "blogName": "Top 10 Jewelry Trends for 2025",
+    "blogImg": "https://picsum.photos/seed/blog-trends/1200/800",
+    "blogTitle": "2025 Jewelry Trends: What's Hot This Year",
+    "blogType": "bling chronicle",
+    "description": "Stay ahead of the fashion curve with our curated list of the hottest jewelry trends for 2025. From chunky chains and statement pearls to sustainable lab-grown diamonds and vintage revival pieces, explore what's making waves in the jewelry world this year.",
+    "createdAt": { "$date": "2025-11-18T10:45:00.000Z" }
+  },
+  {
+    "blogID": "BLOG-0003",
+    "blogName": "How to Care for Your Silver Jewelry",
+    "blogImg": "https://picsum.photos/seed/blog-silver-care/1200/800",
+    "blogTitle": "Silver Care 101: Keep Your Jewelry Shining Bright",
+    "blogType": "jewelry",
+    "description": "Silver jewelry requires special care to maintain its luster. Learn professional tips on cleaning, storing, and preventing tarnish on your favorite silver pieces. We cover everything from DIY cleaning solutions to when you should seek professional restoration services.",
+    "createdAt": { "$date": "2025-11-20T14:20:00.000Z" }
+  },
+  {
+    "blogID": "BLOG-0004",
+    "blogName": "The Rise of Lab-Grown Diamonds",
+    "blogImg": "https://picsum.photos/seed/blog-lab-diamond/1200/800",
+    "blogTitle": "Lab-Grown vs Natural: The Future of Diamonds",
+    "blogType": "news",
+    "description": "Lab-grown diamonds are revolutionizing the jewelry industry. Explore the technological advances that make these diamonds chemically identical to mined stones, their environmental benefits, price advantages, and why more consumers are choosing them for engagement rings and fine jewelry.",
+    "createdAt": { "$date": "2025-11-22T09:15:00.000Z" }
+  },
+  {
+    "blogID": "BLOG-0005",
+    "blogName": "Best Accessories to Pair with Gold Jewelry",
+    "blogImg": "https://picsum.photos/seed/blog-gold-accessories/1200/800",
+    "blogTitle": "Styling Gold: Accessory Pairing Guide",
+    "blogType": "accessory",
+    "description": "Gold jewelry is timeless, but knowing how to accessorize with it can elevate your entire look. Discover expert styling tips for pairing gold necklaces, bracelets, and earrings with watches, bags, and belts. Learn the art of mixing metals and creating cohesive, elegant ensembles.",
+    "createdAt": { "$date": "2025-11-24T11:00:00.000Z" }
+  },
+  {
+    "blogID": "BLOG-0006",
+    "blogName": "The History of Engagement Rings",
+    "blogImg": "https://picsum.photos/seed/blog-engagement-history/1200/800",
+    "blogTitle": "From Ancient Rome to Modern Day: Engagement Ring Evolution",
+    "blogType": "bling chronicle",
+    "description": "Journey through centuries of engagement ring traditions. From ancient Roman betrothal rings to the De Beers diamond campaign that shaped modern proposals, discover how cultural shifts, royal influence, and marketing transformed engagement rings into the symbol of love we know today.",
+    "createdAt": { "$date": "2025-11-26T13:30:00.000Z" }
+  },
+  {
+    "blogID": "BLOG-0007",
+    "blogName": "Choosing the Perfect Bracelet Size",
+    "blogImg": "https://picsum.photos/seed/blog-bracelet-size/1200/800",
+    "blogTitle": "Bracelet Sizing Guide: Finding Your Perfect Fit",
+    "blogType": "jewelry",
+    "description": "Wearing an ill-fitting bracelet can be uncomfortable and unflattering. Learn how to measure your wrist accurately, understand bracelet sizing charts, and choose the right fit for different bracelet styles from tennis bracelets to bangles and charm bracelets.",
+    "createdAt": { "$date": "2025-11-27T16:45:00.000Z" }
+  },
+  {
+    "blogID": "BLOG-0008",
+    "blogName": "Sustainable Jewelry: The Eco-Friendly Movement",
+    "blogImg": "https://picsum.photos/seed/blog-sustainable/1200/800",
+    "blogTitle": "Green Jewelry: How Brands Are Going Sustainable",
+    "blogType": "news",
+    "description": "The jewelry industry is embracing sustainability with recycled metals, ethically sourced gemstones, and eco-conscious production methods. Explore which brands are leading the green movement, certifications to look for, and how consumers can make environmentally responsible jewelry choices.",
+    "createdAt": { "$date": "2025-11-28T10:00:00.000Z" }
+  },
+  {
+    "blogID": "BLOG-0009",
+    "blogName": "Layering Necklaces Like a Pro",
+    "blogImg": "https://picsum.photos/seed/blog-layering/1200/800",
+    "blogTitle": "The Art of Necklace Layering: Tips and Tricks",
+    "blogType": "accessory",
+    "description": "Master the trending art of necklace layering with our expert guide. Learn which lengths work best together, how to mix metals and textures, balance pendants and chains, and create stunning layered looks for casual daywear or elegant evening styles.",
+    "createdAt": { "$date": "2025-11-29T12:20:00.000Z" }
+  },
+  {
+    "blogID": "BLOG-0010",
+    "blogName": "Celebrity Engagement Ring Spotlight",
+    "blogImg": "https://picsum.photos/seed/blog-celebrity-rings/1200/800",
+    "blogTitle": "Iconic Celebrity Engagement Rings That Made Headlines",
+    "blogType": "bling chronicle",
+    "description": "From Elizabeth Taylor's legendary collection to modern celebrity proposals, explore the most stunning and expensive engagement rings in Hollywood. Get inspired by the unique designs, rare gemstones, and extraordinary craftsmanship that make these rings unforgettable.",
+    "createdAt": { "$date": "2025-11-30T15:10:00.000Z" }
+  }
+]

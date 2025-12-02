@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { User } = require("../model/User.js");
+const { User } = require("../models/User.js");
 const {
   usernameRegex,
   emailRegex,
