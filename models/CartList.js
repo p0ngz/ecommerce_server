@@ -4,51 +4,21 @@ const cartSchema = new mongoose.Schema({
   userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    require: true,
+    required: true,
   },
-  cartName: {
-    type: String,
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+    required: true,
   },
-  detail: [
-    {
-      productID: { type: String, required: true },
-      productName: { type: String, required: true },
-      productImg: { type: String },
-      typeProduct: {
-        type: String,
-        enum: ["earring", "necklace", "ring", "bracelet"],
-      },
-      quantity: { type: Number, required: true, min: 1 },
-      discount: {
-        type: Number,
-        default: 0,
-      },
-      inStock: {
-        type: Boolean,
-        required: true,
-      },
-      size: { type: String },
-      color: { type: String },
-      price: { type: Number, required: true, min: 0 },
-    },
-  ],
-  subTotal: {
-    type: Number,
-    require: true,
+  quantity: { type: Number, required: true, min: 1 },
+  size: { type: String, enum: ["S", "M", "L", "XL"], required: true },
+  color: { type: String, required: true },
+  total: { type: Number, required: true, min: 0 }, // (price - discount) * quantity
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
-  shippingPrice: {
-    type: Number,
-    min: 0,
-  },
-  taxPrice: {
-    type: Number,
-    min: 0
-  },
-  totalPrice: {
-    type: Number,
-    min: 0,
-    require: true
-  }
 });
 
 const CartList = mongoose.model("CartList", cartSchema);

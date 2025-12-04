@@ -58,4 +58,18 @@
     "$date": "2025-11-26T19:49:38.844Z"
   },
   "__v": 0
+},
+{
+  "_id": {
+    "$oid": "692e7866b06eedc708062fc8"
+  },
+  "username": "Shana12345",
+  "email": "shanamaster@hotmail.com",
+  "password": "$2b$10$MXhlB.kwmb0WhaLbTijUO.vl3WlEbRowr.iBUSp/T3uoAzD/EZPxK",
+  "role": "customer",
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-12-02T05:25:58.545Z"
+  },
+  "__v": 0
 }]

@@ -4,7 +4,7 @@ const path = require("path");
 const fs = require("fs");
 
 // get all products
-const getAllProducts = async (req, res) => {
+const getAllProducts = async (req, res, next) => {
   /*
     - typeProduct
     - available
@@ -97,7 +97,7 @@ const getAllProducts = async (req, res) => {
 };
 
 // get product by id
-const getProductById = async (req, res) => {
+const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -125,7 +125,7 @@ const getProductById = async (req, res) => {
 };
 
 // create new product
-const createNewProduct = async (req, res) => {
+const createNewProduct = async (req, res, next) => {
   try {
     const {
       productName,
@@ -199,7 +199,7 @@ const createNewProduct = async (req, res) => {
 };
 
 // update product
-const updateProductById = async (req, res) => {
+const updateProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
     let productImagePath;
@@ -268,7 +268,7 @@ const updateProductById = async (req, res) => {
 };
 
 // delete product
-const deleteProductById = async (req, res) => {
+const deleteProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
     if (!id || id === ":id") {
@@ -294,7 +294,7 @@ const deleteProductById = async (req, res) => {
 
 // get product by types
 // earring, necklace, ring, bracelet
-const getProductByType = async (req, res) => {
+const getProductByType = async (req, res, next) => {
   try {
     const { type } = req.params;
     if (!type || type === ":type") {
@@ -314,7 +314,7 @@ const getProductByType = async (req, res) => {
     next(err);
   }
 };
-const getNewestProduct = async (req, res) => {
+const getNewestProduct = async (req, res, next) => {
   try {
     const { limit } = req.query;
     const limitNum = parseInt(limit);
@@ -351,7 +351,7 @@ const getNewestProduct = async (req, res) => {
     next(err);
   }
 };
-const getTopProduct = async (req, res) => {
+const getTopProduct = async (req, res, next) => {
   try {
     const { limit } = req.query;
     const limitNum = parseInt(limit);
@@ -390,7 +390,7 @@ const getTopProduct = async (req, res) => {
   }
 };
 
-const getTopRatingProduct = async (req, res) => {
+const getTopRatingProduct = async (req, res, next) => {
   try {
     const { limit } = req.query;
     const limitNum = parseInt(limit);
@@ -420,7 +420,7 @@ const getTopRatingProduct = async (req, res) => {
     next(err);
   }
 };
-const updateProductImageById = async (req, res) => {
+const updateProductImageById = async (req, res, next) => {
   try {
     const { id } = req.params;
     if (!id || id === ":id") {

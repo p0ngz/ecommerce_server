@@ -2,7 +2,7 @@ const { Blog } = require("../models/Blog.js");
 const mongoose = require("mongoose");
 const path = require("path");
 const fs = require("fs");
-const getAllBlogs = async (req, res) => {
+const getAllBlogs = async (req, res, next) => {
   try {
     const {
       from = new Date("2025-11-26"),
@@ -58,7 +58,7 @@ const getAllBlogs = async (req, res) => {
     next(err);
   }
 };
-const getBlogById = async (req, res) => {
+const getBlogById = async (req, res, next) => {
   try {
     const { id } = req.params;
     if (!id || id === ":id") {
@@ -131,7 +131,7 @@ const createBlog = async (req, res, next) => {
     }
     return res.status(201).json(savedBlog);
   } catch (err) {
-    next(err);
+     next(err);
   }
 };
 
@@ -197,11 +197,11 @@ const updateBlogById = async (req, res, next) => {
     }
     return res.status(200).json(updatedBlog);
   } catch (err) {
-    next(err);
+     next(err);
   }
 };
 
-const deleteBlogById = async (req, res) => {
+const deleteBlogById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -219,7 +219,7 @@ const deleteBlogById = async (req, res) => {
 
     res.status(200).json({ message: "Blog deleted successfully" });
   } catch (err) {
-    next(err);
+    next(err)
   }
 };
 

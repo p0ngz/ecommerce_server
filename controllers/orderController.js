@@ -2,7 +2,7 @@ const { Order } = require("../models/Order");
 const mongoose = require("mongoose");
 
 // get all orders with dynamic filters
-const getAllOrders = async (req, res) => {
+const getAllOrders = async (req, res, next) => {
   try {
     const {
       userID,
@@ -101,7 +101,7 @@ const getAllOrders = async (req, res) => {
 };
 
 // get order by order id
-const getOrderByOrderId = async (req, res) => {
+const getOrderByOrderId = async (req, res, next) => {
   try {
     const { id } = req.params;
     if (!id || id === ":id") {
@@ -129,7 +129,7 @@ const getOrderByOrderId = async (req, res) => {
 };
 
 // create Order
-const createOrder = async (req, res) => {
+const createOrder = async (req, res, next) => {
   try {
     /*
     generate in backend => 
@@ -240,7 +240,7 @@ const createOrder = async (req, res) => {
 };
 
 // update order by order id
-const updateOrderByOrderId = async (req, res) => {
+const updateOrderByOrderId = async (req, res, next) => {
   try {
     const id = req.params.id;
     if (!id || id === ":id") {
@@ -363,7 +363,7 @@ const updateOrderByOrderId = async (req, res) => {
 };
 
 // delete order by order id
-const deleteOrderByOrderId = async (req, res) => {
+const deleteOrderByOrderId = async (req, res, next) => {
   try {
     const { id } = req.params;
     if (!id || id === ":id") {

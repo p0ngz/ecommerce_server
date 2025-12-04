@@ -48,11 +48,13 @@ app.use("/register", require("./routes/register.js"));
 app.use("/user", require("./routes/user.js"));
 app.use("/product", require("./routes/product.js"));
 app.use("/order", require("./routes/order.js"));
+app.use("/wishlist", require("./routes/wishlist.js"));
+app.use("/cartList", require("./routes/cartList.js"));
 app.use("/blog", require("./routes/blog.js"));
 
 // error handler
-app.use(logError);
 app.use(errorHandler);
+app.use(logError);
 // end of middleware here
 // server running and database connect
 

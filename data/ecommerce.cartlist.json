@@ -1,0 +1,254 @@
+[
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef01"
+    },
+    "userID": {
+      "$oid": "692610e1576ff2723c1da0d2"
+    },
+    "productId": {
+      "$oid": "6929479a457fa0a0cc029a36"
+    },
+    "quantity": 2,
+    "size": "M",
+    "color": "gold",
+    "total": 539.98,
+    "createdAt": {
+      "$date": "2025-12-03T10:15:30.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef02"
+    },
+    "userID": {
+      "$oid": "692610e1576ff2723c1da0d2"
+    },
+    "productId": {
+      "$oid": "6929479a457fa0a0cc029a36"
+    },
+    "quantity": 1,
+    "size": "L",
+    "color": "silver",
+    "total": 269.99,
+    "createdAt": {
+      "$date": "2025-12-03T11:20:45.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef03"
+    },
+    "userID": {
+      "$oid": "692610e1576ff2723c1da0d2"
+    },
+    "productId": {
+      "$oid": "692966dea5225e24355bd3bd"
+    },
+    "quantity": 1,
+    "size": "S",
+    "color": "gold",
+    "total": 85,
+    "createdAt": {
+      "$date": "2025-12-03T14:30:12.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef04"
+    },
+    "userID": {
+      "$oid": "6926112d576ff2723c1da0d8"
+    },
+    "productId": {
+      "$oid": "692965e80655d074057d9d91"
+    },
+    "quantity": 1,
+    "size": "L",
+    "color": "gray",
+    "total": 38,
+    "createdAt": {
+      "$date": "2025-12-03T09:45:22.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef05"
+    },
+    "userID": {
+      "$oid": "6926117b612b66f266bffa46"
+    },
+    "productId": {
+      "$oid": "6929479a457fa0a0cc029a39"
+    },
+    "quantity": 1,
+    "size": "M",
+    "color": "silver",
+    "total": 212.08,
+    "createdAt": {
+      "$date": "2025-12-02T15:15:33.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef06"
+    },
+    "userID": {
+      "$oid": "6926117b612b66f266bffa46"
+    },
+    "productId": {
+      "$oid": "6929479a457fa0a0cc029a39"
+    },
+    "quantity": 2,
+    "size": "L",
+    "color": "silver",
+    "total": 424.16,
+    "createdAt": {
+      "$date": "2025-12-02T16:22:44.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef07"
+    },
+    "userID": {
+      "$oid": "6926117b612b66f266bffa46"
+    },
+    "productId": {
+      "$oid": "6929479a457fa0a0cc029a3a"
+    },
+    "quantity": 1,
+    "size": "M",
+    "color": "gold",
+    "total": 139.95,
+    "createdAt": {
+      "$date": "2025-12-03T08:18:55.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef08"
+    },
+    "userID": {
+      "$oid": "692759d2b57c82e4b7b3927b"
+    },
+    "productId": {
+      "$oid": "6929479a457fa0a0cc029a38"
+    },
+    "quantity": 3,
+    "size": "S",
+    "color": "gold",
+    "total": 179.97,
+    "createdAt": {
+      "$date": "2025-12-01T10:25:16.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef09"
+    },
+    "userID": {
+      "$oid": "692759d2b57c82e4b7b3927b"
+    },
+    "productId": {
+      "$oid": "6929479a457fa0a0cc029a3d"
+    },
+    "quantity": 1,
+    "size": "L",
+    "color": "gold",
+    "total": 129,
+    "createdAt": {
+      "$date": "2025-12-01T13:30:27.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef10"
+    },
+    "userID": {
+      "$oid": "692759d2b57c82e4b7b3927b"
+    },
+    "productId": {
+      "$oid": "6929479a457fa0a0cc029a3e"
+    },
+    "quantity": 2,
+    "size": "M",
+    "color": "silver",
+    "total": 94.98,
+    "createdAt": {
+      "$date": "2025-12-02T11:45:38.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef11"
+    },
+    "userID": {
+      "$oid": "692759d2b57c82e4b7b3927b"
+    },
+    "productId": {
+      "$oid": "6929479a457fa0a0cc029a3f"
+    },
+    "quantity": 1,
+    "size": "M",
+    "color": "silver",
+    "total": 127.2,
+    "createdAt": {
+      "$date": "2025-12-02T14:50:49.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef12"
+    },
+    "userID": {
+      "$oid": "692759d2b57c82e4b7b3927b"
+    },
+    "productId": {
+      "$oid": "6929479a457fa0a0cc029a41"
+    },
+    "quantity": 1,
+    "size": "S",
+    "color": "rose-gold",
+    "total": 61.59,
+    "createdAt": {
+      "$date": "2025-12-03T09:12:50.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef13"
+    },
+    "userID": {
+      "$oid": "692e7866b06eedc708062fc8"
+    },
+    "productId": {
+      "$oid": "6929479a457fa0a0cc029a37"
+    },
+    "quantity": 1,
+    "size": "M",
+    "color": "silver",
+    "total": 179.55,
+    "createdAt": {
+      "$date": "2025-12-03T12:35:40.000Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "675f1a1234567890abcdef14"
+    },
+    "userID": {
+      "$oid": "692e7866b06eedc708062fc8"
+    },
+    "productId": {
+      "$oid": "692945d6457fa0a0cc029a2a"
+    },
+    "quantity": 2,
+    "size": "M",
+    "color": "silver",
+    "total": 170,
+    "createdAt": {
+      "$date": "2025-12-03T15:48:51.000Z"
+    }
+  }
+]

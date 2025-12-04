@@ -9,7 +9,7 @@ const {
 } = require("../utils/validation.js");
 
 // get all users
-const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res, next) => {
   try {
     /* 
     user filter
@@ -75,7 +75,7 @@ const getAllUsers = async (req, res) => {
 };
 
 // get user by id
-const getUSerById = async (req, res) => {
+const getUSerById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const foundUser = await User.findById(id).exec();
@@ -102,7 +102,7 @@ const getUSerById = async (req, res) => {
 };
 
 // create new user
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
@@ -157,7 +157,7 @@ const createUser = async (req, res) => {
 };
 
 // update user
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
     if (!id || id === ":id") {
@@ -219,7 +219,7 @@ const updateUser = async (req, res) => {
     next(err);
   }
 };
-const deleteUserById = async (req, res) => {
+const deleteUserById = async (req, res, next) => {
   try {
     const { id } = req.params;
     if (!id || id === ":id") {

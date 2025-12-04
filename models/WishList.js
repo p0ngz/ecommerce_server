@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const { Product } = require("./Product.js");
 const wishlistSchema = new mongoose.Schema({
   userID: {
     type: mongoose.Schema.Types.ObjectId,
@@ -8,32 +8,45 @@ const wishlistSchema = new mongoose.Schema({
   },
   totalItem: {
     type: Number,
-    require: true,
+    required: true,
     default: 0,
   },
-  detail: [
-    {
-      productID: { type: String, required: true },
-      productName: { type: String, required: true },
-      productImg: { type: String },
-      typeProduct: {
-        type: String,
-        enum: ["earring", "necklace", "ring", "bracelet"],
-      },
-      quantity: { type: Number, required: true, min: 1 },
-      discount: {
-        type: Number,
-        default: 0,
-      },
-      inStock: {
-        type: Boolean,
+  detail: {
+    type: {
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
         required: true,
       },
-      size: { type: String },
-      color: { type: String },
-      price: { type: Number, required: true, min: 0 },
+      // productName: { type: String, required: true },
+      // productImg: { type: String },
+      // typeProduct: {
+      //   type: String,
+      //   enum: ["earring", "necklace", "ring", "bracelet"],
+      // },
+      // discount: {
+      //   type: Number,
+      //   default: 0,
+      // },
+      // inStock: {
+      //   type: Boolean,
+      //   required: true,
+      // },
+      // quantity: { type: Number, required: true, min: 1 },
+      // size: { type: String, enum: ["S", "M", "L", "XL"], required: true },
+      // color: { type: String, required: true },
+      // price: { type: Number, required: true, min: 0 },
+      // total: { type: Number, required: true, min: 0 },
     },
-  ],
+
+    required: true,
+  },
+  // totalPrice just all price of (product *quantity) - discount of product only not additional discount coupon or code
+  // totalPrice: {
+  //   type: Number,
+  //   min: 0,
+  //   required: true,
+  // },
   createdAt: {
     type: Date,
     default: Date.now,
