@@ -7,11 +7,11 @@ router
   .get(couponController.getAllCoupons)
   .post(couponController.createNewCoupon);
 
-router.route("/user/:userId").get(couponController.getCouponsByUserId);
 router
   .route("/:id")
   .get(couponController.getCouponByCouponId)
   .put(couponController.updateCouponById)
-  .delete(couponController.deleteCouponById);
+  .delete(couponController.softDeleteCouponById);
 
+router.route("/:id/hard").delete(couponController.hardDeleteCouponById);
 module.exports = router;

@@ -12,7 +12,7 @@ const couponSchema = new mongoose.Schema({
   code: {
     type: String,
     required: true,
-    default: function () {
+    set: function () {
       return `CPN-${this.couponName}${this.discountValue}`;
     },
   },
@@ -33,9 +33,17 @@ const couponSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  maxDiscountAmount: {
+  maximumPrice: {
+    type: Number,
+    default: Infinity,
+  },
+  minDiscountAmount: {
     type: Number,
     default: 0,
+  },
+  maxDiscountAmount: {
+    type: Number,
+    default: Infinity,
   },
   usageLimit: {
     // maximum number of times the coupon can be used
@@ -45,16 +53,19 @@ const couponSchema = new mongoose.Schema({
   usageCount: {
     // to track how many times the coupon has been used
     type: Number,
+    default: 0,
   },
-  maxUserLimit: {
-    type: Number,
-    default: 1,
-  },
+  // maxUserLimit: {
+  //   type: Number,
+  //   default: 1,
+  // },
   validFrom: {
+    // can start use coupon
     type: Date,
     require: true,
   },
   validUntil: {
+    // can no longer use coupon after this date
     type: Date,
     require: true,
   },
@@ -62,9 +73,28 @@ const couponSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  createdAt: {
+  createdBy: {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  deletedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  deletedAt: {
     type: Date,
-    default: Date.now,
+    default: new Date(),
   },
 });
 

@@ -14,6 +14,8 @@ const { connectDB } = require("./config/connectDB.js");
 const { startServer } = require("./utils/startServer.js");
 const credentials = require("./middleware/credentials.js");
 const corsOption = require("./config/corsOption.js");
+const { noRouteHandler } = require("./middleware/noRoutesHandler.js");
+
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -51,13 +53,16 @@ app.use("/order", require("./routes/order.js"));
 app.use("/wishlist", require("./routes/wishlist.js"));
 app.use("/cartList", require("./routes/cartList.js"));
 app.use("/blog", require("./routes/blog.js"));
+app.use("/coupon", require("./routes/coupon.js"));
+app.use("/userCoupon", require("./routes/userCoupon.js"));
 
 // error handler
+app.use(noRouteHandler);
 app.use(errorHandler);
 app.use(logError);
+
 // end of middleware here
 // server running and database connect
-
 startServer(app, PORT);
 
 process.on("uncaughtException", (err) => {
