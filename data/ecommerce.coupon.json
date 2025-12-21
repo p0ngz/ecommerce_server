@@ -4,22 +4,22 @@
       "$oid": "675c1a2b3d4e5f6a7b8c9d0e"
     },
     "couponID": "CPN-001",
-    "couponName": "WELCOME",
-    "code": "CPN-WELCOME10",
+    "couponName": "WELCOME10",
+    "code": "CPN-WELCOME1010",
     "discountType": "percentage",
     "discountValue": 10,
-    "description": "Welcome discount for new customers - 10% off on first purchase",
-    "minimumPrice": 500,
-    "maximumPrice": 10000,
-    "minDiscountAmount": 50,
-    "maxDiscountAmount": 1000,
+    "description": "Welcome discount for new customers",
+    "minimumPrice": 100,
+    "maximumPrice": 5000,
+    "minDiscountAmount": 10,
+    "maxDiscountAmount": 500,
     "usageLimit": 100,
-    "usageCount": 45,
+    "usageCount": 15,
     "validFrom": {
-      "$date": "2025-01-01T00:00:00.000Z"
+      "$date": "2025-12-01T00:00:00.000Z"
     },
     "validUntil": {
-      "$date": "2025-12-31T23:59:59.999Z"
+      "$date": "2026-03-31T23:59:59.999Z"
     },
     "isActive": true,
     "createdBy": {
@@ -27,7 +27,7 @@
         "$oid": "692610e1576ff2723c1da0d2"
       },
       "createdAt": {
-        "$date": "2025-01-01T08:00:00.000Z"
+        "$date": "2025-12-01T10:00:00.000Z"
       }
     },
     "isDeleted": false
@@ -37,30 +37,30 @@
       "$oid": "675c1a2b3d4e5f6a7b8c9d0f"
     },
     "couponID": "CPN-002",
-    "couponName": "SUMMER",
-    "code": "CPN-SUMMER20",
+    "couponName": "NEWYEAR2026",
+    "code": "CPN-NEWYEAR202625",
     "discountType": "percentage",
-    "discountValue": 20,
-    "description": "Summer sale - Get 20% off on all items",
-    "minimumPrice": 1000,
-    "maximumPrice": 50000,
-    "minDiscountAmount": 100,
-    "maxDiscountAmount": 2000,
-    "usageLimit": 200,
-    "usageCount": 150,
+    "discountValue": 25,
+    "description": "New Year celebration discount",
+    "minimumPrice": 200,
+    "maximumPrice": 10000,
+    "minDiscountAmount": 50,
+    "maxDiscountAmount": 1000,
+    "usageLimit": 50,
+    "usageCount": 23,
     "validFrom": {
-      "$date": "2025-06-01T00:00:00.000Z"
+      "$date": "2025-12-25T00:00:00.000Z"
     },
     "validUntil": {
-      "$date": "2025-08-31T23:59:59.999Z"
+      "$date": "2026-01-15T23:59:59.999Z"
     },
-    "isActive": false,
+    "isActive": true,
     "createdBy": {
       "userId": {
         "$oid": "692610e1576ff2723c1da0d2"
       },
       "createdAt": {
-        "$date": "2025-05-25T10:30:00.000Z"
+        "$date": "2025-12-10T08:30:00.000Z"
       }
     },
     "isDeleted": false
@@ -74,26 +74,26 @@
     "code": "CPN-FREESHIP50",
     "discountType": "fixed",
     "discountValue": 50,
-    "description": "Free shipping coupon - 50 baht discount on shipping",
-    "minimumPrice": 300,
+    "description": "Free shipping coupon",
+    "minimumPrice": 500,
     "maximumPrice": 999999,
     "minDiscountAmount": 50,
     "maxDiscountAmount": 50,
-    "usageLimit": 500,
-    "usageCount": 287,
+    "usageLimit": 200,
+    "usageCount": 87,
     "validFrom": {
-      "$date": "2025-01-15T00:00:00.000Z"
+      "$date": "2025-12-01T00:00:00.000Z"
     },
     "validUntil": {
-      "$date": "2025-12-31T23:59:59.999Z"
+      "$date": "2026-12-31T23:59:59.999Z"
     },
     "isActive": true,
     "createdBy": {
       "userId": {
-        "$oid": "6926112d576ff2723c1da0d8"
+        "$oid": "692610e1576ff2723c1da0d2"
       },
       "createdAt": {
-        "$date": "2025-01-15T09:00:00.000Z"
+        "$date": "2025-11-28T14:20:00.000Z"
       }
     },
     "isDeleted": false
@@ -103,22 +103,55 @@
       "$oid": "675c1a2b3d4e5f6a7b8c9d11"
     },
     "couponID": "CPN-004",
-    "couponName": "VIP",
-    "code": "CPN-VIP30",
+    "couponName": "VIP30",
+    "code": "CPN-VIP3030",
     "discountType": "percentage",
     "discountValue": 30,
-    "description": "Exclusive VIP member discount - 30% off",
-    "minimumPrice": 2000,
-    "maximumPrice": 100000,
-    "minDiscountAmount": 200,
+    "description": "VIP member exclusive discount",
+    "minimumPrice": 1000,
+    "maximumPrice": 50000,
+    "minDiscountAmount": 300,
     "maxDiscountAmount": 5000,
-    "usageLimit": 50,
-    "usageCount": 50,
+    "usageLimit": 30,
+    "usageCount": 12,
     "validFrom": {
-      "$date": "2025-03-01T00:00:00.000Z"
+      "$date": "2025-11-20T00:00:00.000Z"
     },
     "validUntil": {
-      "$date": "2025-12-31T23:59:59.999Z"
+      "$date": "2026-02-28T23:59:59.999Z"
+    },
+    "isActive": true,
+    "createdBy": {
+      "userId": {
+        "$oid": "692610e1576ff2723c1da0d2"
+      },
+      "createdAt": {
+        "$date": "2025-11-19T09:00:00.000Z"
+      }
+    },
+    "isDeleted": false
+  },
+  {
+    "_id": {
+      "$oid": "675c1a2b3d4e5f6a7b8c9d12"
+    },
+    "couponID": "CPN-005",
+    "couponName": "FLASH100",
+    "code": "CPN-FLASH100100",
+    "discountType": "fixed",
+    "discountValue": 100,
+    "description": "Flash sale coupon - limited time",
+    "minimumPrice": 300,
+    "maximumPrice": 3000,
+    "minDiscountAmount": 100,
+    "maxDiscountAmount": 100,
+    "usageLimit": 150,
+    "usageCount": 148,
+    "validFrom": {
+      "$date": "2025-12-15T00:00:00.000Z"
+    },
+    "validUntil": {
+      "$date": "2025-12-20T23:59:59.999Z"
     },
     "isActive": false,
     "createdBy": {
@@ -126,46 +159,7 @@
         "$oid": "692610e1576ff2723c1da0d2"
       },
       "createdAt": {
-        "$date": "2025-02-28T14:20:00.000Z"
-      }
-    },
-    "isDeleted": true,
-    "deletedBy": {
-      "$oid": "692610e1576ff2723c1da0d2"
-    },
-    "deletedAt": {
-      "$date": "2025-11-15T16:45:00.000Z"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d12"
-    },
-    "couponID": "CPN-005",
-    "couponName": "NEWYEAR",
-    "code": "CPN-NEWYEAR25",
-    "discountType": "percentage",
-    "discountValue": 25,
-    "description": "New Year celebration - 25% discount on selected items",
-    "minimumPrice": 1500,
-    "maximumPrice": 30000,
-    "minDiscountAmount": 150,
-    "maxDiscountAmount": 3000,
-    "usageLimit": 150,
-    "usageCount": 12,
-    "validFrom": {
-      "$date": "2025-12-20T00:00:00.000Z"
-    },
-    "validUntil": {
-      "$date": "2026-01-10T23:59:59.999Z"
-    },
-    "isActive": true,
-    "createdBy": {
-      "userId": {
-        "$oid": "6926117b612b66f266bffa46"
-      },
-      "createdAt": {
-        "$date": "2025-12-15T11:00:00.000Z"
+        "$date": "2025-12-14T16:45:00.000Z"
       }
     },
     "isDeleted": false
@@ -175,30 +169,30 @@
       "$oid": "675c1a2b3d4e5f6a7b8c9d13"
     },
     "couponID": "CPN-006",
-    "couponName": "FLASH",
-    "code": "CPN-FLASH100",
-    "discountType": "fixed",
-    "discountValue": 100,
-    "description": "Flash sale - 100 baht instant discount",
-    "minimumPrice": 800,
-    "maximumPrice": 5000,
-    "minDiscountAmount": 100,
-    "maxDiscountAmount": 100,
-    "usageLimit": 300,
-    "usageCount": 298,
+    "couponName": "SUMMER20",
+    "code": "CPN-SUMMER2020",
+    "discountType": "percentage",
+    "discountValue": 20,
+    "description": "Summer collection discount",
+    "minimumPrice": 150,
+    "maximumPrice": 8000,
+    "minDiscountAmount": 30,
+    "maxDiscountAmount": 800,
+    "usageLimit": 80,
+    "usageCount": 34,
     "validFrom": {
-      "$date": "2025-11-11T00:00:00.000Z"
+      "$date": "2025-12-01T00:00:00.000Z"
     },
     "validUntil": {
-      "$date": "2025-11-11T23:59:59.999Z"
+      "$date": "2026-02-28T23:59:59.999Z"
     },
-    "isActive": false,
+    "isActive": true,
     "createdBy": {
       "userId": {
-        "$oid": "6926112d576ff2723c1da0d8"
+        "$oid": "692610e1576ff2723c1da0d2"
       },
       "createdAt": {
-        "$date": "2025-11-10T18:30:00.000Z"
+        "$date": "2025-11-25T11:00:00.000Z"
       }
     },
     "isDeleted": false
@@ -208,19 +202,52 @@
       "$oid": "675c1a2b3d4e5f6a7b8c9d14"
     },
     "couponID": "CPN-007",
+    "couponName": "FIRSTORDER",
+    "code": "CPN-FIRSTORDER15",
+    "discountType": "percentage",
+    "discountValue": 15,
+    "description": "First order special discount",
+    "minimumPrice": 50,
+    "maximumPrice": 2000,
+    "minDiscountAmount": 7.5,
+    "maxDiscountAmount": 300,
+    "usageLimit": 500,
+    "usageCount": 189,
+    "validFrom": {
+      "$date": "2025-11-01T00:00:00.000Z"
+    },
+    "validUntil": {
+      "$date": "2026-06-30T23:59:59.999Z"
+    },
+    "isActive": true,
+    "createdBy": {
+      "userId": {
+        "$oid": "692610e1576ff2723c1da0d2"
+      },
+      "createdAt": {
+        "$date": "2025-10-28T13:30:00.000Z"
+      }
+    },
+    "isDeleted": false
+  },
+  {
+    "_id": {
+      "$oid": "675c1a2b3d4e5f6a7b8c9d15"
+    },
+    "couponID": "CPN-008",
     "couponName": "BLACKFRIDAY",
     "code": "CPN-BLACKFRIDAY50",
     "discountType": "percentage",
     "discountValue": 50,
-    "description": "Black Friday mega sale - 50% off everything",
-    "minimumPrice": 3000,
-    "maximumPrice": 999999,
-    "minDiscountAmount": 500,
-    "maxDiscountAmount": 10000,
-    "usageLimit": 100,
-    "usageCount": 89,
+    "description": "Black Friday mega sale",
+    "minimumPrice": 500,
+    "maximumPrice": 20000,
+    "minDiscountAmount": 250,
+    "maxDiscountAmount": 3000,
+    "usageLimit": 20,
+    "usageCount": 20,
     "validFrom": {
-      "$date": "2025-11-28T00:00:00.000Z"
+      "$date": "2025-11-29T00:00:00.000Z"
     },
     "validUntil": {
       "$date": "2025-11-30T23:59:59.999Z"
@@ -231,15 +258,15 @@
         "$oid": "692610e1576ff2723c1da0d2"
       },
       "createdAt": {
-        "$date": "2025-11-20T09:15:00.000Z"
+        "$date": "2025-11-20T10:15:00.000Z"
       }
     },
     "isDeleted": true,
     "deletedBy": {
-      "$oid": "6926117b612b66f266bffa46"
+      "$oid": "692610e1576ff2723c1da0d2"
     },
     "deletedAt": {
-      "$date": "2025-12-01T10:00:00.000Z"
+      "$date": "2025-12-01T08:00:00.000Z"
     }
   }
 ]

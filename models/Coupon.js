@@ -7,11 +7,10 @@ const couponSchema = new mongoose.Schema({
   },
   couponName: {
     type: String,
-    required: true,
+    required: true, // make sure to provide a name
   },
   code: {
     type: String,
-    required: true,
     set: function () {
       return `CPN-${this.couponName}${this.discountValue}`;
     },
@@ -20,6 +19,7 @@ const couponSchema = new mongoose.Schema({
     type: String,
     enum: ["percentage", "fixed"],
     default: "percentage",
+    required: true,
   },
   discountValue: {
     type: Number,
@@ -46,7 +46,7 @@ const couponSchema = new mongoose.Schema({
     default: Infinity,
   },
   usageLimit: {
-    // maximum number of times the coupon can be used
+    // maximum limit we can give it to uses
     type: Number,
     default: 1,
   },
@@ -55,19 +55,16 @@ const couponSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  // maxUserLimit: {
-  //   type: Number,
-  //   default: 1,
-  // },
+
   validFrom: {
     // can start use coupon
     type: Date,
-    require: true,
+    required: true,
   },
   validUntil: {
     // can no longer use coupon after this date
     type: Date,
-    require: true,
+    required: true,
   },
   isActive: {
     type: Boolean,
@@ -115,6 +112,47 @@ couponSchema.pre("save", async function (next) {
     }
   }
 });
+
+couponSchema.virtual("isExpired").get(function () {
+  // use function for use this.xxx
+  if (this.validUntil) {
+    return new Date() > new Date(this.validUntil);
+  }
+  return false;
+});
+
+couponSchema.statics.updateExpiredCoupons = async function () {
+  const now = new Date();
+  const expiredIds = [];
+
+  const coupons = await this.find({}).exec();
+
+  coupons.forEach((coupon) => {
+    if (
+      coupon.isActive &&
+      coupon.validUntil &&
+      new Date(coupon.validUntil) < now
+    ) {
+      expiredIds.push(coupon._id);
+    }
+  });
+
+  if (expiredIds.length > 0) {
+    await this.updateMany(
+      {
+        _id: { $in: expiredIds },
+      },
+      { $set: { isActive: false } }
+    );
+  }
+  return {
+    count: expiredIds.length,
+    updatedIds: expiredIds,
+  };
+};
+
+couponSchema.set("toJSON", { virtuals: true }); //includes virtual when return like response. if want it when query use .lean(virtual: true)
+couponSchema.set("toObject", { virtuals: true });
 const Coupon = mongoose.model("Coupon", couponSchema);
 
 module.exports = { Coupon };

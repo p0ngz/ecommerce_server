@@ -1,18 +1,21 @@
 const mongoose = require("mongoose");
-const { use } = require("react");
+const { Coupon } = require("./Coupon");
 
 const userCouponSchema = new mongoose.Schema({
   userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    require: true,
+    required: true,
   },
   couponID: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "Coupon",
+    required: true,
   },
   status: {
     type: String,
     enum: ["claimed", "used", "expired"],
+    default: "claimed",
   },
   claimedAt: {
     type: Date,
@@ -20,12 +23,78 @@ const userCouponSchema = new mongoose.Schema({
   },
   usedAt: {
     type: Date,
+    default: null,
   },
   orderID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Order",
   },
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: {
+    type: Date,
+    default: null,
+  },
 });
+
+// virtual field is field that is not stored in MongoDB, but is calculated on the fly
+userCouponSchema.virtual("isExpired").get(function () {
+  if (this.couponID && this.couponID.validUntil) {
+    return new Date() > new Date(this.couponID.validUntil);
+  }
+  return false;
+});
+
+// method is instance method function for each document => ex. userCoupon.methodName
+userCouponSchema.methods.checkAndUpdateExpiry = async function () {
+  if (this.status !== "used" && this.couponID) {
+    // Populate if not already populated
+    if (!this.couponID.validUntil) {
+      await this.populate("couponID");
+    }
+
+    const now = new Date();
+    const validUntil = new Date(this.couponID.validUntil);
+
+    if (now > validUntil && this.status === "claimed") {
+      this.status = "expired";
+      await this.save();
+      return true;
+    }
+  }
+  return false;
+};
+
+// static method is for the entire model => ex. UserCoupon.methodName
+userCouponSchema.statics.updateExpiredCoupons = async function () {
+  // Find all claimed user coupons with their coupon details
+  const userCoupons = await this.find({ status: "claimed" }).populate(
+    "couponID"
+  );
+
+  const now = new Date();
+  const expiredIds = [];
+
+  userCoupons.forEach((uc) => {
+    if (uc.couponID && new Date(uc.couponID.validUntil) < now) {
+      expiredIds.push(uc._id);
+    }
+  });
+
+  if (expiredIds.length > 0) {
+    await this.updateMany(
+      { _id: { $in: expiredIds } },
+      { $set: { status: "expired" } }
+    );
+  }
+
+  return {
+    count: expiredIds.length,
+    updatedIds: expiredIds,
+  };
+};
+
+userCouponSchema.set("toJSON", { virtuals: true });
+userCouponSchema.set("toObject", { virtuals: true });
 
 const UserCoupon = mongoose.model("UserCoupon", userCouponSchema);
 

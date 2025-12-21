@@ -1,22 +1,10 @@
 const { Coupon } = require("../models/Coupon");
 const { User } = require("../models/User");
 const mongoose = require("mongoose");
+// !ไม่ควรให้ controller คุยกับ Mongoose ตรง ๆ ควรแยก logic ไปที่ service แทน
 
 const getAllCoupons = async (req, res, next) => {
   try {
-    /* 
-        filter
-        - from 
-        - to
-        - validFrom
-        - validUntil
-        - search (code, couponName)
-        - discountType
-        - isActive
-        - sort = "-createdAt" "-usageCount" "-usageLimit"
-        - page
-        - limit
-    */
     const {
       from,
       to,
@@ -169,7 +157,6 @@ const createNewCoupon = async (req, res, next) => {
       err.statusCode = 400;
       return next(err);
     }
-
     // Validate couponName
     const couponNameStr = String(couponName).trim();
     if (couponNameStr.length < 3) {
@@ -177,14 +164,6 @@ const createNewCoupon = async (req, res, next) => {
       err.statusCode = 400;
       return next(err);
     }
-
-    // Check duplicate couponName
-    // const duplicateCoupon = await Coupon.findOne({ couponName: couponNameStr }).exec();
-    // if (duplicateCoupon) {
-    //   const err = new Error("Coupon with this name already exists");
-    //   err.statusCode = 409;
-    //   return next(err);
-    // }
 
     // Validate discountType
     const discountTypeStr = String(discountType).trim().toLowerCase();
@@ -337,9 +316,9 @@ const createNewCoupon = async (req, res, next) => {
       isActive: isActive !== undefined ? Boolean(isActive) : true,
       createdBy: {
         userId: createdBy.userId,
-        createdAt: {
-          createdAt: new Date(),
-        },
+        createdAt: createdBy.createdAt
+          ? new Date(createdBy.createdAt)
+          : new Date(),
       },
     });
 
@@ -350,7 +329,9 @@ const createNewCoupon = async (req, res, next) => {
       err.statusCode = 500;
       return next(err);
     }
-
+    // const result = await Coupon.findOne({ "createdBy.userId": "6926117b612b66f266bffa46" })
+    //   .populate("createdBy.userId")
+    //   .exec();
     res.status(201).json({
       message: "Coupon created successfully",
       coupon: savedCoupon,
@@ -362,7 +343,7 @@ const createNewCoupon = async (req, res, next) => {
 
 const updateCouponById = async (req, res, next) => {
   try {
-    const { id } = req.params.id;
+    const { id } = req.params;
     const {
       couponName,
       discountType,
@@ -388,31 +369,31 @@ const updateCouponById = async (req, res, next) => {
       err.statusCode = 400;
       return next(err);
     }
-    if (!discountValue) {
-      const err = new Error("discountValue is required");
-      err.statusCode = 400;
-      return next(err);
-    }
-    if (!couponName) {
-      const err = new Error("couponName is required");
-      err.statusCode = 400;
-      return next(err);
-    }
-    if (!validFrom) {
-      const err = new Error("validFrom is required");
-      err.statusCode = 400;
-      return next(err);
-    }
-    if (!validUntil) {
-      const err = new Error("validUntil is required");
-      err.statusCode = 400;
-      return next(err);
-    }
-    if (!createdBy.userId) {
-      const err = new Error("createdBy.userId is required");
-      err.statusCode = 400;
-      return next(err);
-    }
+    // if (!discountValue) {
+    //   const err = new Error("discountValue is required");
+    //   err.statusCode = 400;
+    //   return next(err);
+    // }
+    // if (!couponName) {
+    //   const err = new Error("couponName is required");
+    //   err.statusCode = 400;
+    //   return next(err);
+    // }
+    // if (!validFrom) {
+    //   const err = new Error("validFrom is required");
+    //   err.statusCode = 400;
+    //   return next(err);
+    // }
+    // if (!validUntil) {
+    //   const err = new Error("validUntil is required");
+    //   err.statusCode = 400;
+    //   return next(err);
+    // }
+    // if (!createdBy.userId) {
+    //   const err = new Error("createdBy.userId is required");
+    //   err.statusCode = 400;
+    //   return next(err);
+    // }
     if (!mongoose.Types.ObjectId.isValid(createdBy.userId)) {
       const err = new Error("Invalid createdBy.userId format");
       err.statusCode = 400;
@@ -510,7 +491,9 @@ const softDeleteCouponById = async (req, res, next) => {
       return next(err);
     }
 
-    res.status(200).json({ message: `Coupon id ${id} is soft deleted successfully` });
+    res
+      .status(200)
+      .json({ message: `Coupon id ${id} is soft deleted successfully` });
   } catch (err) {
     next(err);
   }
@@ -538,7 +521,9 @@ const hardDeleteCouponById = async (req, res, next) => {
       return next(err);
     }
 
-    res.status(200).json({ message: `Coupon id ${id} is hard deleted successfully` });
+    res
+      .status(200)
+      .json({ message: `Coupon id ${id} is hard deleted successfully` });
   } catch (err) {
     next(err);
   }

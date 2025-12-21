@@ -15,11 +15,10 @@ const { startServer } = require("./utils/startServer.js");
 const credentials = require("./middleware/credentials.js");
 const corsOption = require("./config/corsOption.js");
 const { noRouteHandler } = require("./middleware/noRoutesHandler.js");
-
+const { startCronJobs } = require("./utils/cronJobs.js");
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
 
-connectDB(DATABASE_URL);
 // start middleware
 /* 
     app.get: for routing handler for GET requests
@@ -63,8 +62,10 @@ app.use(logError);
 
 // end of middleware here
 // server running and database connect
-startServer(app, PORT);
-
+connectDB(DATABASE_URL).then(() => {
+  startCronJobs();
+  startServer(app, PORT);
+})
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception: ", err);
   console.log("Server will restart automatically");

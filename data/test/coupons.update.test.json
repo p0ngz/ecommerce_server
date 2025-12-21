@@ -1,0 +1,81 @@
+[
+  {
+    "couponName": "NEWYEAR2026",
+    "discountType": "percentage",
+    "discountValue": 30,
+    "description": "New Year 2026 special discount",
+    "minimumPrice": 1000,
+    "maximumPrice": 20000,
+    "maxDiscountAmount": 3000,
+    "usageLimit": 150,
+    "validFrom": "2026-01-01",
+    "validUntil": "2026-01-15",
+    "isActive": true,
+    "createdBy": {
+      "userId": "692610e1576ff2723c1da0d2"
+    }
+  },
+  {
+    "couponName": "FLASH100",
+    "discountType": "fixed",
+    "discountValue": 100,
+    "description": "Flash sale discount updated",
+    "minimumPrice": 500,
+    "usageLimit": 500,
+    "validFrom": "2025-12-19",
+    "validUntil": "2025-12-20",
+    "isActive": true,
+    "createdBy": {
+      "userId": "6926112d576ff2723c1da0d8"
+    }
+  },
+  {
+    "couponName": "LOYALTY15",
+    "discountType": "percentage",
+    "discountValue": 15,
+    "description": "Loyalty member exclusive discount",
+    "minimumPrice": 800,
+    "maximumPrice": 15000,
+    "minDiscountAmount": 100,
+    "maxDiscountAmount": 1500,
+    "usageLimit": 100,
+    "validFrom": "2025-12-18",
+    "validUntil": "2026-03-31",
+    "isActive": true,
+    "createdBy": {
+      "userId": "6926117b612b66f266bffa46"
+    }
+  },
+  {
+    "couponName": "BIRTHDAY",
+    "discountType": "fixed",
+    "discountValue": 200,
+    "description": "Birthday month special gift",
+    "minimumPrice": 1500,
+    "maximumPrice": 50000,
+    "usageLimit": 1,
+    "validFrom": "2025-12-01",
+    "validUntil": "2025-12-31",
+    "isActive": false,
+    "createdBy": {
+      "userId": "692610e1576ff2723c1da0d2"
+    }
+  },
+  {
+    "couponName": "CLEARANCE",
+    "discountType": "percentage",
+    "discountValue": 40,
+    "description": "End of year clearance sale",
+    "minimumPrice": 2500,
+    "maximumPrice": 100000,
+    "minDiscountAmount": 500,
+    "maxDiscountAmount": 8000,
+    "usageLimit": 250,
+    "validFrom": "2025-12-26",
+    "validUntil": "2025-12-31",
+    "isActive": true,
+    "createdBy": {
+      "userId": "6926112d576ff2723c1da0d8"
+    }
+  }
+]

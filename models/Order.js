@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const { nanoid } = require("nanoid");
 const { generateID } = require("../utils/generateID.js");
-const { User } = require("./User.js");
-const { Product } = require("./Product.js");
 
 const orderSchema = new mongoose.Schema({
   orderID: { type: String, unique: true },
@@ -66,6 +64,11 @@ const orderSchema = new mongoose.Schema({
     amount: { type: Number, default: 0, min: 0 },
   },
   totalPrice: { type: Number, required: true, min: 0 },
+  coupon: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Coupon",
+    default: null,
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -1,0 +1,41 @@
+[
+  {
+    "couponName": "WEEKEND20",
+    "discountValue": 20,
+    "validFrom": "2025-12-20",
+    "validUntil": "2025-12-22",
+    "createdBy": {
+      "userId": "692610e1576ff2723c1da0d2"
+    }
+  },
+  {
+    "couponName": "FIRSTBUY",
+    "discountType": "fixed",
+    "discountValue": 150,
+    "description": "First time buyer discount",
+    "minimumPrice": 500,
+    "usageLimit": 50,
+    "validFrom": "2025-12-18",
+    "validUntil": "2026-06-30",
+    "createdBy": {
+      "userId": "6926112d576ff2723c1da0d8"
+    }
+  },
+  {
+    "couponName": "XMAS50",
+    "discountType": "percentage",
+    "discountValue": 50,
+    "description": "Christmas mega sale",
+    "minimumPrice": 2000,
+    "maximumPrice": 50000,
+    "maxDiscountAmount": 5000,
+    "usageLimit": 200,
+    "validFrom": "2025-12-24",
+    "validUntil": "2025-12-26",
+    "isActive": true,
+    "createdBy": {
+      "userId": "6926117b612b66f266bffa46",
+      "createdAt": "2025-12-18"
+    }
+  }
+]
