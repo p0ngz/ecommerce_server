@@ -57,7 +57,7 @@ const getAllCartLists = async (req, res, next) => {
   }
 };
 
-const getCartListById = async (req, res, next) => {
+const getCartListByICartListId = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { user = "false" } = req.query;
@@ -85,7 +85,7 @@ const getCartListById = async (req, res, next) => {
       return next(err);
     }
 
-    res.status(200).json({ foundCartList });
+    res.status(200).json(foundCartList);
   } catch (err) {
     next(err);
   }
@@ -108,11 +108,11 @@ const getCartListByUserId = async (req, res, next) => {
     const foundCartListByUserId = await CartList.find({
       userID: userId,
     })
-       // select from populate doest not auto hide nested object
-      // .populate({
-      //   path: "userID",
-      //   select: "-password -role -information -isActive -createdAt -__v",
-      // })
+      // select from populate doest not auto hide nested object
+      .populate({
+        path: "userID",
+        select: "-password -role -information -isActive -createdAt -__v",
+      })
       .populate("productId")
       .exec();
 
@@ -122,7 +122,7 @@ const getCartListByUserId = async (req, res, next) => {
       return next(err);
     }
 
-    res.status(200).json({ foundCartListByUserId });
+    res.status(200).json(foundCartListByUserId);
   } catch (err) {
     next(err);
   }
@@ -145,9 +145,7 @@ const createOrUpdateCartListByUserId = async (req, res, next) => {
 
     const { productId, quantity, size, color, total } = req.body;
     if (!productId || !quantity || !size || !color) {
-      const err = new Error(
-        "productId, quantity, size and color are required"
-      );
+      const err = new Error("productId, quantity, size and color are required");
       err.statusCode = 400;
       return next(err);
     }
@@ -238,6 +236,44 @@ const createOrUpdateCartListByUserId = async (req, res, next) => {
   }
 };
 
+const updateCartListByCartListId = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id || id === ":id") {
+      const err = new Error("CartList id is required");
+      err.statusCode = 400;
+      return next(err);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+const deleteCartListByCartListId = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id || id === ":id") {
+      const err = new Error("CartList id is required");
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    const foundAndDeletedCartList = await CartList.findByIdAndDelete(id).exec();
+
+    if (!foundAndDeletedCartList) {
+      const err = new Error("CartList not found with id: " + id);
+      err.statusCode = 404;
+      return next(err);
+    }
+    res
+      .status(200)
+      .json({
+        message: "CartList deleted successfully",
+        foundAndDeletedCartList,
+      });
+  } catch (err) {
+    next(err);
+  }
+};
 const deleteCartListByUserId = async (req, res, next) => {
   try {
     const { userId } = req.params;
@@ -271,8 +307,10 @@ const deleteCartListByUserId = async (req, res, next) => {
 };
 module.exports = {
   getAllCartLists,
-  getCartListById,
+  getCartListByICartListId,
   getCartListByUserId,
   createOrUpdateCartListByUserId,
+  updateCartListByCartListId,
+  deleteCartListByCartListId,
   deleteCartListByUserId,
 };

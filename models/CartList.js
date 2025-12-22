@@ -11,7 +11,7 @@ const cartSchema = new mongoose.Schema({
     ref: "Product",
     required: true,
   },
-  quantity: { type: Number, required: true, min: 1 },
+  quantity: { type: Number, required: true, min: 1, default: 1 },
   size: { type: String, enum: ["S", "M", "L", "XL"], required: true },
   color: { type: String, required: true },
   total: { type: Number, required: true, min: 0 }, // (price - discount) * quantity

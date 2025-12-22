@@ -222,13 +222,22 @@ const createMapCouponWithUser = async (req, res, next) => {
     });
 
     const savedCouponWithUser = await createMapCouponWithUser.save();
-    console.log("savedCouponWithUser: ", savedCouponWithUser);
 
     if (!savedCouponWithUser) {
       const err = new Error("Failed to create userCoupon mapping");
       err.statusCode = 500;
       return next(err);
     }
+    // update distributedCount in Coupon model
+    const foundCoupon = await Coupon.findById(couponID).exec();
+    if (!foundCoupon) {
+      const err = new Error("Coupon not found to update distributedCount");
+      err.statusCode = 404;
+      return next(err);
+    }
+    foundCoupon.distributionCount = foundCoupon.distributionCount + 1;
+
+    await foundCoupon.save();
     res
       .status(201)
       .json({ message: "userCoupon created", data: savedCouponWithUser });
@@ -266,8 +275,7 @@ const updateUserCouponByUserIdAndCouponId = async (req, res, next) => {
       $and: [{ userID: userId }, { couponID: id }],
     }).exec();
     const foundCoupon = await Coupon.findById(id).exec();
-    console.log("foundUserCoupon: ", foundUserCoupon);
-    console.log("foundCoupon: ", foundCoupon);
+    
     if (!foundUserCoupon) {
       return res.status(200).json({ message: "userCoupon mapping not found" });
     }

@@ -18,7 +18,7 @@ const { noRouteHandler } = require("./middleware/noRoutesHandler.js");
 const { startCronJobs } = require("./utils/cronJobs.js");
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
-
+const { Blog } = require("./models/Blog.js");
 // start middleware
 /* 
     app.get: for routing handler for GET requests
@@ -38,7 +38,7 @@ app.use(credentials);
 // cors
 app.use(cors(corsOption));
 
-// built in middleware static files
+
 app.use("/uploads", express.static("public/uploads")); // when frontend want to use <img src={`http://localhost:3000/uploads/users/${user.userImage}`} />
 app.use(express.urlencoded({ extended: false })); // for form data (Content-Type: application/x-www-form-urlencoded)
 app.use(express.json()); // for json data (Content-Type: application/json)

@@ -1,0 +1,196 @@
+{
+  "description": "CORRECTED Test data for creating orders - POST /api/order",
+  "note": "Do NOT include 'price' field in detail items - let the backend calculate from product DB",
+  
+  "corrected_usage": {
+    "title": "How to use this API correctly",
+    "rules": [
+      "✅ DO: Only send product, quantity, size, color in detail items",
+      "✅ DO: Backend will fetch product price & discount from DB and calculate total",
+      "❌ DON'T: Send 'price' field unless you want to override DB prices",
+      "❌ DON'T: Try to calculate prices yourself - let backend do it"
+    ]
+  },
+
+  "simple_order_example": {
+    "description": "Recommended way to create an order",
+    "request": {
+      "userID": "676000000000000000000003",
+      "totalItem": 3,
+      "detail": [
+        {
+          "product": "677000000000000000000001",
+          "quantity": 1,
+          "size": "S",
+          "color": "white gold"
+        },
+        {
+          "product": "677000000000000000000002",
+          "quantity": 2,
+          "size": "M",
+          "color": "yellow gold"
+        },
+        {
+          "product": "677000000000000000000005",
+          "quantity": 1,
+          "size": "L",
+          "color": "rose gold"
+        }
+      ],
+      "deliverAddress": "789 Pine Street, Chicago, IL 60601",
+      "shippingPrice": 20.00,
+      "taxPrice": 149.00,
+      "discount": {
+        "percent": 0,
+        "amount": 0
+      }
+    },
+    "what_happens": "Backend will fetch each product's price and discount from DB, then calculate: price * (1 - discount%) * quantity for each item"
+  },
+
+  "order_with_percentage_discount": {
+    "description": "Order with 10% coupon discount on total",
+    "request": {
+      "userID": "676000000000000000000004",
+      "totalItem": 2,
+      "detail": [
+        {
+          "product": "677000000000000000000003",
+          "quantity": 1,
+          "size": "M",
+          "color": "silver"
+        },
+        {
+          "product": "677000000000000000000004",
+          "quantity": 1,
+          "size": "L",
+          "color": "gold"
+        }
+      ],
+      "deliverAddress": "321 Maple Drive, Houston, TX 77001",
+      "shippingPrice": 12.00,
+      "taxPrice": 41.00,
+      "discount": {
+        "percent": 10,
+        "amount": 0
+      },
+      "coupon": "678000000000000000000001"
+    },
+    "calculation": "subTotal = sum of all (productPrice * (1-productDiscount%) * qty), then totalPrice = (subTotal - 10%) + shipping + tax"
+  },
+
+  "order_with_fixed_discount": {
+    "description": "Order with $50 fixed amount discount",
+    "request": {
+      "userID": "676000000000000000000005",
+      "totalItem": 1,
+      "detail": [
+        {
+          "product": "677000000000000000000006",
+          "quantity": 3,
+          "size": "XL",
+          "color": "platinum"
+        }
+      ],
+      "deliverAddress": "654 Elm Street, Phoenix, AZ 85001",
+      "shippingPrice": 25.00,
+      "taxPrice": 225.00,
+      "discount": {
+        "percent": 0,
+        "amount": 50
+      },
+      "coupon": "678000000000000000000003"
+    },
+    "calculation": "totalPrice = subTotal - $50 + shipping + tax"
+  },
+
+  "minimal_order": {
+    "description": "Minimum required fields only",
+    "request": {
+      "userID": "676000000000000000000002",
+      "totalItem": 1,
+      "detail": [
+        {
+          "product": "677000000000000000000001",
+          "quantity": 1,
+          "size": "M",
+          "color": "white gold"
+        }
+      ],
+      "deliverAddress": "123 Main Street, City, State 12345"
+    },
+    "note": "shippingPrice, taxPrice, discount will default to 0"
+  },
+
+  "expected_response_structure": {
+    "_id": "ObjectId (auto-generated)",
+    "orderID": "ORD-00001 (auto-generated)",
+    "trackingNumber": "10-char nanoid (auto-generated)",
+    "userID": "676000000000000000000003",
+    "totalItem": 3,
+    "detail": [
+      {
+        "_id": "ObjectId (auto-generated for subdoc)",
+        "product": "677000000000000000000001",
+        "quantity": 1,
+        "size": "S",
+        "color": "white gold",
+        "discountProduct": "Product's discount % at time of order (from DB)",
+        "price": "unitPrice * quantity (before discount)",
+        "totalPrice": "unitPrice * (1 - discountProduct%) * quantity (after discount)"
+      }
+    ],
+    "deliverAddress": "789 Pine Street, Chicago, IL 60601",
+    "status": {
+      "pass": ["orderPlaced"],
+      "current": []
+    },
+    "cancel": false,
+    "subTotal": "Sum of all detail[].totalPrice (after product discounts)",
+    "shippingPrice": 20.00,
+    "taxPrice": 149.00,
+    "discount": {
+      "percent": 0,
+      "amount": 0
+    },
+    "totalPrice": "subTotal - order discount + shipping + tax",
+    "coupon": null,
+    "createdAt": "ISO date (auto-generated)"
+  },
+
+  "pricing_calculation_explained": {
+    "step1_detail_item_calculation": {
+      "discountProduct": "Fetched from Product model (e.g., 10%)",
+      "price": "unitPrice * quantity (e.g., 299.99 * 2 = 599.98)",
+      "totalPrice": "unitPrice * (1 - discountProduct/100) * quantity",
+      "example": "299.99 * (1 - 10/100) * 2 = 299.99 * 0.9 * 2 = 539.98"
+    },
+    "step2_subtotal": {
+      "formula": "Sum of all detail[].totalPrice (after product discounts)",
+      "example": "item1.totalPrice + item2.totalPrice + item3.totalPrice",
+      "note": "This is AFTER individual product discounts are applied"
+    },
+    "step3_order_total_with_percentage_discount": {
+      "formula": "(subTotal - (subTotal * percent / 100)) + shipping + tax",
+      "example": "subTotal=1000, percent=10%, shipping=20, tax=80",
+      "calculation": "(1000 - 100) + 20 + 80 = 1000",
+      "note": "Order-level discount applied on top of product discounts"
+    },
+    "step4_order_total_with_fixed_discount": {
+      "formula": "(subTotal - amount) + shipping + tax",
+      "example": "subTotal=1000, amount=50, shipping=20, tax=80",
+      "calculation": "(1000 - 50) + 20 + 80 = 1050",
+      "note": "Fixed amount discount on top of product discounts"
+    }
+  },
+
+  "important_notes": [
+    "Product discount (discountProduct) is fetched from Product DB and stored in order detail",
+    "Each detail item stores: discountProduct %, price (before discount), totalPrice (after discount)",
+    "subTotal = sum of all detail[].totalPrice (after product discounts)",
+    "Order discount (percent/amount) is applied ON TOP of product discounts",
+    "Cannot use both discount.percent and discount.amount at the same time",
+    "Backend auto-generates: orderID, trackingNumber, _id, createdAt",
+    "You only need to send: product, quantity, size, color - prices are calculated automatically"
+  ]
+}

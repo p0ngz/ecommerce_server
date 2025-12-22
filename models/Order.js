@@ -18,21 +18,19 @@ const orderSchema = new mongoose.Schema({
         ref: "Product",
         required: true,
       },
-      productID: { type: String, required: true },
-      productName: { type: String, required: true },
-      productImg: { type: String },
-      typeProduct: {
-        type: String,
-        enum: ["earring", "necklace", "ring", "bracelet"],
-      },
       quantity: { type: Number, required: true, min: 1 },
-      discount: {
-        type: Number,
-        default: 0,
+      size: {
+        type: String,
+        enum: ["S", "M", "L", "XL"],
+        required: [true, "size when chosen product is required"],
       },
-      size: { type: String, enum: ["S", "M", "L", "XL"] },
-      color: { type: String },
-      price: { type: Number, required: true, min: 0 },
+      color: {
+        type: String,
+        required: [true, "color when chosen product is required"],
+      },
+      discountProduct: { type: Number, default: 0, min: 0, max: 100 }, // discount of product at the time of order
+      price: { type: Number, required: true, min: 0 }, //price * quantity
+      totalPrice: { type: Number, required: true, min: 0 }, // price after discountProduct applied
     },
   ],
   deliverAddress: { type: String, required: true },
@@ -48,7 +46,14 @@ const orderSchema = new mongoose.Schema({
     },
   },
   cancel: { type: Boolean, default: false },
-  subTotal: { type: Number, required: true, min: 0 },
+  subTotal: {
+    type: Number,
+    required: true,
+    min: 0,
+    default: function () {
+      return this.detail.reduce((acc, item) => acc + item.price, 0);
+    },
+  },
   shippingPrice: {
     type: Number,
     min: 0,
@@ -62,8 +67,42 @@ const orderSchema = new mongoose.Schema({
   discount: {
     percent: { type: Number, default: 0, min: 0, max: 100 },
     amount: { type: Number, default: 0, min: 0 },
+    discountValue: {
+      type: Number,
+      default: function () {
+        if (this.discount.percent > 0) {
+          return Number((this.subTotal * this.discount.percent) / 100).toFixed(
+            2
+          );
+        }
+        if (this.discount.amount > 0) {
+          return Number(this.discount.amount).toFixed(2);
+        }
+        return 0;
+      },
+    },
   },
-  totalPrice: { type: Number, required: true, min: 0 },
+  totalPrice: {
+    type: Number,
+    required: true,
+    min: 0,
+    default: function () {
+      if (this.discount.percentage > 0) {
+        const discountAmount = (this.subTotal * this.discount.percent) / 100;
+        return Number(
+          this.subTotal - discountAmount + this.shippingPrice + this.taxPrice
+        ).toFixed(2);
+      }
+      if (this.discount.amount > 0) {
+        return Number(
+          this.subTotal -
+            this.discount.amount +
+            this.shippingPrice +
+            this.taxPrice
+        ).toFixed(2);
+      }
+    },
+  },
   coupon: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Coupon",

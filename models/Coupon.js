@@ -45,13 +45,23 @@ const couponSchema = new mongoose.Schema({
     type: Number,
     default: Infinity,
   },
+  distributionLimit: {
+    // maximum number of users who can receive this coupon
+    type: Number,
+    default: null, // null means unlimited distribution
+  },
+  distributionCount: {
+    // how many users have received/claimed this coupon
+    type: Number,
+    default: 0,
+  },
   usageLimit: {
-    // maximum limit we can give it to uses
+    // maximum times this coupon can be used (applied at checkout)
     type: Number,
     default: 1,
   },
   usageCount: {
-    // to track how many times the coupon has been used
+    // how many times the coupon has been actually used
     type: Number,
     default: 0,
   },

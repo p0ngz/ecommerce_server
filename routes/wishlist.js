@@ -13,5 +13,7 @@ router
   .get(wishlistController.getWishListByUserId)
   // .put(wishlistController.updateWishListByWishlistId)
   .delete(wishlistController.deleteWishlistByUserId);
-
+router
+  .route("/user/:userId/product/:productId")
+  .delete(wishlistController.deleteWishlistByUserIdAndProductId);
 module.exports = router;

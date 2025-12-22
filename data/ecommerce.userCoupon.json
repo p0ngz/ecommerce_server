@@ -1,259 +1,174 @@
 [
   {
     "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e01"
+      "$oid": "682000000000000000000001"
     },
     "userID": {
-      "$oid": "692610e1576ff2723c1da0d2"
+      "$oid": "676000000000000000000002"
     },
     "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d0e"
-    },
-    "claimedAt": {
-      "$date": "2025-11-27T10:00:00.000Z"
+      "$oid": "678000000000000000000001"
     },
     "status": "used",
+    "claimedAt": {
+      "$date": "2025-11-26T10:00:00.000Z"
+    },
     "usedAt": {
-      "$date": "2025-11-28T10:30:00.000Z"
+      "$date": "2025-11-30T14:30:00.000Z"
     },
     "orderID": {
-      "$oid": "676700001a2b3c4d5e6f7d01"
-    }
+      "$oid": "679000000000000000000001"
+    },
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0
   },
   {
     "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e02"
+      "$oid": "682000000000000000000002"
     },
     "userID": {
-      "$oid": "6926112d576ff2723c1da0d8"
+      "$oid": "676000000000000000000004"
     },
     "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d14"
-    },
-    "claimedAt": {
-      "$date": "2025-12-01T09:00:00.000Z"
+      "$oid": "678000000000000000000004"
     },
     "status": "used",
+    "claimedAt": {
+      "$date": "2025-12-05T09:30:00.000Z"
+    },
     "usedAt": {
-      "$date": "2025-12-02T14:15:00.000Z"
+      "$date": "2025-12-15T16:45:00.000Z"
     },
     "orderID": {
-      "$oid": "676700001a2b3c4d5e6f7d02"
-    }
+      "$oid": "679000000000000000000003"
+    },
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0
   },
   {
     "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e03"
+      "$oid": "682000000000000000000003"
     },
     "userID": {
-      "$oid": "6926117b612b66f266bffa46"
+      "$oid": "676000000000000000000008"
     },
     "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d10"
-    },
-    "claimedAt": {
-      "$date": "2025-12-03T08:30:00.000Z"
+      "$oid": "678000000000000000000005"
     },
     "status": "used",
+    "claimedAt": {
+      "$date": "2025-11-28T14:00:00.000Z"
+    },
     "usedAt": {
-      "$date": "2025-12-04T09:45:00.000Z"
+      "$date": "2025-12-10T10:30:00.000Z"
     },
     "orderID": {
-      "$oid": "676700001a2b3c4d5e6f7d03"
-    }
+      "$oid": "679000000000000000000006"
+    },
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0
   },
   {
     "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e04"
+      "$oid": "682000000000000000000004"
     },
     "userID": {
-      "$oid": "692759d2b57c82e4b7b3927b"
+      "$oid": "676000000000000000000002"
     },
     "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d13"
-    },
-    "claimedAt": {
-      "$date": "2025-12-05T10:00:00.000Z"
-    },
-    "status": "used",
-    "usedAt": {
-      "$date": "2025-12-06T16:20:00.000Z"
-    },
-    "orderID": {
-      "$oid": "676700001a2b3c4d5e6f7d04"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e05"
-    },
-    "userID": {
-      "$oid": "692e7866b06eedc708062fc8"
-    },
-    "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d14"
-    },
-    "claimedAt": {
-      "$date": "2025-12-07T09:00:00.000Z"
-    },
-    "status": "used",
-    "usedAt": {
-      "$date": "2025-12-08T11:10:00.000Z"
-    },
-    "orderID": {
-      "$oid": "676700001a2b3c4d5e6f7d05"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e06"
-    },
-    "userID": {
-      "$oid": "692610e1576ff2723c1da0d2"
-    },
-    "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d0e"
-    },
-    "claimedAt": {
-      "$date": "2025-12-10T08:00:00.000Z"
-    },
-    "status": "used",
-    "usedAt": {
-      "$date": "2025-12-11T08:40:00.000Z"
-    },
-    "orderID": {
-      "$oid": "676700001a2b3c4d5e6f7d07"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e07"
-    },
-    "userID": {
-      "$oid": "6926117b612b66f266bffa46"
-    },
-    "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d10"
-    },
-    "claimedAt": {
-      "$date": "2025-12-11T14:00:00.000Z"
-    },
-    "status": "used",
-    "usedAt": {
-      "$date": "2025-12-12T15:55:00.000Z"
-    },
-    "orderID": {
-      "$oid": "676700001a2b3c4d5e6f7d08"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e08"
-    },
-    "userID": {
-      "$oid": "692759d2b57c82e4b7b3927b"
-    },
-    "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d11"
-    },
-    "claimedAt": {
-      "$date": "2025-12-13T09:00:00.000Z"
-    },
-    "status": "used",
-    "usedAt": {
-      "$date": "2025-12-14T12:15:00.000Z"
-    },
-    "orderID": {
-      "$oid": "676700001a2b3c4d5e6f7d10"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e09"
-    },
-    "userID": {
-      "$oid": "6926112d576ff2723c1da0d8"
-    },
-    "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d13"
-    },
-    "claimedAt": {
-      "$date": "2025-12-15T08:30:00.000Z"
-    },
-    "status": "used",
-    "usedAt": {
-      "$date": "2025-12-16T09:20:00.000Z"
-    },
-    "orderID": {
-      "$oid": "676700001a2b3c4d5e6f7d12"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e10"
-    },
-    "userID": {
-      "$oid": "692610e1576ff2723c1da0d2"
-    },
-    "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d0f"
-    },
-    "claimedAt": {
-      "$date": "2025-12-16T10:00:00.000Z"
+      "$oid": "678000000000000000000004"
     },
     "status": "claimed",
+    "claimedAt": {
+      "$date": "2025-12-18T10:00:00.000Z"
+    },
     "usedAt": null,
-    "orderID": null
+    "orderID": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0
   },
   {
     "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e11"
+      "$oid": "682000000000000000000005"
     },
     "userID": {
-      "$oid": "692e7866b06eedc708062fc8"
+      "$oid": "676000000000000000000003"
     },
     "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d11"
-    },
-    "claimedAt": {
-      "$date": "2025-12-16T14:00:00.000Z"
+      "$oid": "678000000000000000000003"
     },
     "status": "claimed",
+    "claimedAt": {
+      "$date": "2025-12-15T11:30:00.000Z"
+    },
     "usedAt": null,
-    "orderID": null
+    "orderID": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0
   },
   {
     "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e12"
+      "$oid": "682000000000000000000006"
     },
     "userID": {
-      "$oid": "6926117b612b66f266bffa46"
+      "$oid": "676000000000000000000006"
     },
     "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d0f"
-    },
-    "claimedAt": {
-      "$date": "2025-12-17T09:00:00.000Z"
-    },
-    "status": "claimed",
-    "usedAt": null,
-    "orderID": null
-  },
-  {
-    "_id": {
-      "$oid": "676800001a2b3c4d5e6f7e13"
-    },
-    "userID": {
-      "$oid": "692759d2b57c82e4b7b3927b"
-    },
-    "couponID": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d12"
-    },
-    "claimedAt": {
-      "$date": "2025-12-15T10:00:00.000Z"
+      "$oid": "678000000000000000000006"
     },
     "status": "expired",
+    "claimedAt": {
+      "$date": "2025-12-02T08:00:00.000Z"
+    },
     "usedAt": null,
-    "orderID": null
+    "orderID": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "682000000000000000000007"
+    },
+    "userID": {
+      "$oid": "676000000000000000000004"
+    },
+    "couponID": {
+      "$oid": "678000000000000000000005"
+    },
+    "status": "claimed",
+    "claimedAt": {
+      "$date": "2025-12-19T14:20:00.000Z"
+    },
+    "usedAt": null,
+    "orderID": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "682000000000000000000008"
+    },
+    "userID": {
+      "$oid": "676000000000000000000008"
+    },
+    "couponID": {
+      "$oid": "678000000000000000000001"
+    },
+    "status": "claimed",
+    "claimedAt": {
+      "$date": "2025-12-20T09:00:00.000Z"
+    },
+    "usedAt": null,
+    "orderID": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0
   }
 ]

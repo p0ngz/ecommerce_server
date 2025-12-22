@@ -5,27 +5,14 @@ const fs = require("fs");
 
 // get all products
 const getAllProducts = async (req, res, next) => {
-  /*
-    - typeProduct
-    - available
-    - price
-      - priceMin
-      - priceMax
-    - color
-    - search
-    - from
-    - to
-    - page: 1
-    - limit: 10
-    - sort : -createdAt 
-   */
   try {
     const {
       typeProduct,
-      available,
       priceMin = 0,
       priceMax,
       color,
+      size,
+      inStock,
       search,
       from = new Date("2025-11-26"), // createdAt from (ISO date)
       to = new Date(), // createdAt to (ISO date)
@@ -38,16 +25,33 @@ const getAllProducts = async (req, res, next) => {
     if (typeProduct) {
       query.typeProduct = typeProduct.toLowerCase();
     }
-    if (available) {
-      query.inStock = { $gt: 0 };
-    }
+
     if (priceMin || priceMax) {
       query.price = {};
       if (priceMin) query.price.$gte = Number(priceMin);
       if (priceMax) query.price.$lte = Number(priceMax);
     }
+
     if (Array.isArray(color) && color.length > 0) {
-      query.color = { $in: color.map((color) => color.toLowerCase()) };
+      query["variants.color"] = {
+        $in: color.map((color) => color.toLowerCase()),
+      };
+    }
+    const colors =
+      Array.isArray(color) && color.length > 0
+        ? color.map((c) => c.toLowerCase())
+        : color
+        ? [color.toLowerCase()]
+        : null;
+    const sizes =
+      Array.isArray(size) && size.length > 0
+        ? size.map((s) => s.toUpperCase())
+        : size
+        ? [size.toUpperCase()]
+        : null;
+
+    if (inStock) {
+      query["variants.inStock"] = { $gte: 0 };
     }
     if (search) {
       query.productName = { $regex: search, $options: "i" };
@@ -57,7 +61,7 @@ const getAllProducts = async (req, res, next) => {
       if (from) query.createdAt.$gte = new Date(from);
       if (to) query.createdAt.$lte = new Date(to);
     }
-
+    const inStockNum = inStock !== undefined ? Number(inStock) : null;
     const pageRaw = typeof page === "string" ? page.trim() : page;
     const limitRaw = typeof limit === "string" ? limit.trim() : limit;
     const pageParsed = Number(pageRaw);
@@ -72,12 +76,55 @@ const getAllProducts = async (req, res, next) => {
       typeof sort === "string" && sort.trim() !== ""
         ? sort.trim()
         : "-createdAt";
+    const matchStage = { $match: query };
+    const projectStage = {
+      $project: {
+        productID: 1,
+        productName: 1,
+        productImg: 1,
+        typeProduct: 1,
+        rating: 1,
+        price: 1,
+        discount: 1,
+        createdAt: 1,
 
-    const [products, total] = await Promise.all([
-      Product.find(query).sort(sortSpec).skip(skip).limit(limitNum).exec(),
-      Product.countDocuments(query).exec(),
+        variants: {
+          $filter: {
+            input: "$variants",
+            as: "v",
+            cond: {
+              $and: [
+                ...(colors ? [{ $in: ["$$v.color", colors] }] : []),
+                ...(sizes ? [{ $in: ["$$v.size", sizes] }] : []),
+                ...(inStockNum !== null
+                  ? [{ $gte: ["$$v.inStock", inStockNum] }]
+                  : []),
+              ],
+            },
+          },
+        },
+      },
+    };
+    const sortStage = {
+      $sort: sortSpec.startsWith("-")
+        ? { [sortSpec.slice(1)]: -1 }
+        : { [sortSpec]: 1 },
+    };
+
+    const skipStage = { $skip: skip };
+    const limitStage = { $limit: limitNum };
+    const pipeline = [
+      matchStage,
+      projectStage,
+      sortStage,
+      skipStage,
+      limitStage,
+    ];
+    const [products, totalResult] = await Promise.all([
+      Product.aggregate(pipeline),
+      Product.aggregate([matchStage, { $count: "total" }]),
     ]);
-
+    const total = totalResult[0]?.total || 0;
     if (!products || products.length === 0) {
       const err = new Error("No Products found");
       err.statusCode = 404;
@@ -131,14 +178,11 @@ const createNewProduct = async (req, res, next) => {
       productName,
       typeProduct,
       rating,
-      color,
       description,
-      inStock,
       discount,
-      size,
       price,
+      variants: variantsParse,
     } = req.body;
-
     let productImagePath;
     const duplicateProduct = await Product.findOne({
       productName: productName,
@@ -149,25 +193,28 @@ const createNewProduct = async (req, res, next) => {
       return next(err);
     }
 
-    if (
-      !productName ||
-      !typeProduct ||
-      !color ||
-      !description ||
-      !price ||
-      !size
-    ) {
+    if (!productName || !typeProduct || !description || !price) {
       const err = new Error(
-        "productName, productImage, typeProduct, color, description, price and size are required"
+        "productName, productImage, typeProduct,  description, and price  are required"
       );
       err.statusCode = 400;
       return next(err);
     }
-    const formatColor = color.map((color) => {
-      return color.toLowerCase();
-    });
-    const formatSize = size.map((size) => {
-      return size.toUpperCase();
+    const variants = JSON.parse(variantsParse);
+    const variantsFormat = variants.map((variant) => {
+      if (!variant.color || !variant.size) {
+        const err = new Error("variants color and variants size are required");
+        err.statusCode = 400;
+        throw err;
+      }
+      if (variant.inStock < 0) {
+        const err = new Error(
+          "variants inStock must be greater than or equal to 0"
+        );
+        err.statusCode = 400;
+        throw err;
+      }
+      return variant;
     });
     if (req.file) {
       productImagePath = "/uploads/products/" + req.file.filename;
@@ -177,12 +224,10 @@ const createNewProduct = async (req, res, next) => {
       productImg: productImagePath,
       typeProduct,
       rating,
-      color: formatColor,
       description,
-      inStock,
       discount,
-      size: formatSize,
       price,
+      variants: variantsFormat,
     });
     const savedProduct = await newProduct.save();
     if (!savedProduct) {
@@ -214,46 +259,53 @@ const updateProductById = async (req, res, next) => {
       err.statusCode = 400;
       return next(err);
     }
+    const foundProduct = await Product.findById({ _id: id }).exec();
+    if (!foundProduct) {
+      const err = new Error("Not found product with id: " + id);
+      err.statusCode = 404;
+      return next(err);
+    }
     const {
       productName,
       typeProduct,
       rating,
-      color,
       description,
-      inStock,
       discount,
-      size,
       price,
+      variants: variantsParse,
     } = req.body;
-    const formatColor = color.map((color) => {
-      return color.toLowerCase();
-    });
-    const formatSize = size.map((size) => {
-      return size.toUpperCase();
-    });
     if (req.file) {
       productImagePath = "uploads/products/" + req.file.filename;
     }
-    const updatedProduct = await Product.findByIdAndUpdate(
-      {
-        _id: id,
-      },
-      {
-        $set: {
-          productName: productName || foundProduct.productName,
-          productImg: productImagePath || foundProduct.productImg,
-          typeProduct: typeProduct || foundProduct.typeProduct,
-          rating: rating || foundProduct.rating,
-          color: formatColor || foundProduct.color,
-          description: description || foundProduct.description,
-          inStock: inStock || foundProduct.inStock,
-          discount: discount || foundProduct.discount,
-          size: formatSize || foundProduct.size,
-          price: price || foundProduct.price,
-        },
-      },
-      { new: true, runValidator: true }
-    );
+    const variants = JSON.parse(variantsParse);
+    const variantsFormat = variants.map((variant) => {
+      if (!variant.color || !variant.size) {
+        const err = new Error("variants color and variants size are required");
+        err.statusCode = 400;
+        throw err;
+      }
+      if (variant.inStock < 0) {
+        const err = new Error(
+          "variants inStock must be greater than or equal to 0"
+        );
+        err.statusCode = 400;
+        throw err;
+      }
+      return variant;
+    });
+
+    // update field like this better than use set if we have some field in model that automatic change when save
+    if (productName) foundProduct.productName = productName;
+    if (productImagePath) foundProduct.productImg = productImagePath;
+    if (typeProduct) foundProduct.typeProduct = typeProduct;
+    if (rating !== undefined) foundProduct.rating = rating;
+    if (description) foundProduct.description = description;
+    if (discount !== undefined) foundProduct.discount = discount;
+    if (price !== undefined) foundProduct.price = price;
+    if (variantsFormat) foundProduct.variants = variantsFormat;
+
+    // Save (this triggers the pre-save hook that calculates inStock)
+    const updatedProduct = await foundProduct.save();
     if (!updatedProduct) {
       const err = new Error("Not found product with id: " + id);
       err.statusCode = 404;
@@ -358,7 +410,7 @@ const getTopProduct = async (req, res, next) => {
     if (!limitNum) {
       // query all products
       const topProduct = await Product.find({})
-        .sort({ sellingAmount: -1 })
+        .sort({ sellingAmountTotal: -1 })
         .exec();
 
       if (!topProduct || topProduct.length === 0) {

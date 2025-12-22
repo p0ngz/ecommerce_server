@@ -36,11 +36,12 @@ const getAllBlogs = async (req, res, next) => {
       Number.isFinite(limitParsed) && limitParsed > 0 ? limitParsed : limit; // default 5
 
     const skip = (pageNum - 1) * limitNum;
-
+    console.log("query: ", query);
     const [blogs, total] = await Promise.all([
       Blog.find(query).sort(sortSpec).skip(skip).limit(limitNum).exec(),
       Blog.countDocuments(query).exec(),
     ]);
+    console.log("blogs: ", blogs);
     if (!blogs || blogs.length === 0) {
       const err = new Error("No Blogs found");
       err.statusCode = 404;

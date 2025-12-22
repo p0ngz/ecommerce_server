@@ -1,637 +1,341 @@
 [
   {
     "_id": {
-      "$oid": "676700001a2b3c4d5e6f7d01"
+      "$oid": "679000000000000000000001"
     },
     "orderID": "ORD-00001",
-    "trackingNumber": "TRK001X2Y3Z",
     "userID": {
-      "$oid": "692610e1576ff2723c1da0d2"
+      "$oid": "676000000000000000000002"
     },
+    "trackingNumber": "TRK1234567",
     "totalItem": 2,
     "detail": [
       {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a36"
+        "_id": {
+          "$oid": "679100000000000000000001"
         },
-        "productID": "PROD-001",
-        "productName": "Aurora Diamond Ring",
-        "productImg": "https://picsum.photos/seed/aurora-ring/800",
-        "typeProduct": "ring",
+        "product": {
+          "$oid": "677000000000000000000001"
+        },
         "quantity": 1,
-        "discount": 10,
         "size": "M",
-        "color": "gold",
-        "price": 299.99
+        "color": "white gold",
+        "price": 269.99
       },
       {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a37"
+        "_id": {
+          "$oid": "679100000000000000000002"
         },
-        "productID": "PROD-002",
-        "productName": "Luna Pearl Necklace",
-        "productImg": "https://picsum.photos/seed/luna-necklace/800",
-        "typeProduct": "necklace",
-        "quantity": 1,
-        "discount": 5,
+        "product": {
+          "$oid": "677000000000000000000006"
+        },
+        "quantity": 2,
+        "size": "S",
         "color": "silver",
-        "price": 189
+        "price": 159.98
       }
     ],
-    "deliverAddress": "366/1 soi krungthonburi 6, BanglumpuLang Krongsarn Bangkok",
+    "deliverAddress": "456 Oak Avenue, Los Angeles, CA 90001",
     "status": {
-      "pass": ["orderPlaced", "processing", "shipped", "delivered"],
-      "current": ["delivered"]
+      "pass": [
+        "orderPlaced",
+        "processing",
+        "shipped",
+        "delivered"
+      ],
+      "current": [
+        "delivered"
+      ]
     },
     "cancel": false,
-    "subTotal": 458.94,
-    "shippingPrice": 50,
-    "taxPrice": 32.13,
+    "subTotal": 429.97,
+    "shippingPrice": 10,
+    "taxPrice": 34.4,
     "discount": {
       "percent": 10,
-      "amount": 45.89
+      "amount": 42.99
     },
-    "totalPrice": 495.18,
+    "totalPrice": 431.38,
     "coupon": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d0e"
+      "$oid": "678000000000000000000001"
     },
     "createdAt": {
-      "$date": "2025-11-28T10:30:00.000Z"
-    }
+      "$date": "2025-11-30T14:30:00.000Z"
+    },
+    "__v": 0
   },
   {
     "_id": {
-      "$oid": "676700001a2b3c4d5e6f7d02"
+      "$oid": "679000000000000000000002"
     },
     "orderID": "ORD-00002",
-    "trackingNumber": "TRK002A4B5C",
     "userID": {
-      "$oid": "6926112d576ff2723c1da0d8"
+      "$oid": "676000000000000000000003"
     },
+    "trackingNumber": "TRK2345678",
     "totalItem": 1,
     "detail": [
       {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a38"
+        "_id": {
+          "$oid": "679100000000000000000003"
         },
-        "productID": "PROD-003",
-        "productName": "Stellar Hoop Earrings",
-        "productImg": "https://picsum.photos/seed/stellar-earrings/800",
-        "typeProduct": "earring",
-        "quantity": 2,
-        "discount": 0,
-        "color": "gold",
-        "price": 59.99
+        "product": {
+          "$oid": "677000000000000000000003"
+        },
+        "quantity": 1,
+        "size": "M",
+        "color": "platinum",
+        "price": 1039.99
       }
     ],
-    "deliverAddress": "123 Main Street, Bangkok 10100",
+    "deliverAddress": "789 Pine Road, Chicago, IL 60601",
     "status": {
-      "pass": ["orderPlaced", "processing", "shipped"],
-      "current": ["shipped"]
+      "pass": [
+        "orderPlaced",
+        "processing"
+      ],
+      "current": [
+        "processing"
+      ]
     },
     "cancel": false,
-    "subTotal": 119.98,
-    "shippingPrice": 50,
-    "taxPrice": 8.4,
+    "subTotal": 1039.99,
+    "shippingPrice": 0,
+    "taxPrice": 83.2,
     "discount": {
-      "percent": 15,
-      "amount": 18
+      "percent": 20,
+      "amount": 259.99
     },
-    "totalPrice": 160.38,
-    "coupon": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d14"
-    },
+    "totalPrice": 863.2,
+    "coupon": null,
     "createdAt": {
-      "$date": "2025-12-02T14:15:00.000Z"
-    }
+      "$date": "2025-12-10T09:15:00.000Z"
+    },
+    "__v": 0
   },
   {
     "_id": {
-      "$oid": "676700001a2b3c4d5e6f7d03"
+      "$oid": "679000000000000000000003"
     },
     "orderID": "ORD-00003",
-    "trackingNumber": "TRK003D6E7F",
     "userID": {
-      "$oid": "6926117b612b66f266bffa46"
+      "$oid": "676000000000000000000004"
     },
+    "trackingNumber": "TRK3456789",
     "totalItem": 3,
     "detail": [
       {
-        "product": {
-          "$oid": "692945d6457fa0a0cc029a2a"
+        "_id": {
+          "$oid": "679100000000000000000004"
         },
-        "productID": "PROD-014",
-        "productName": "Dainty Chain Bracelet",
-        "productImg": "uploads/products/bracelet2_1764321889507_.webp",
-        "typeProduct": "bracelet",
-        "quantity": 1,
-        "discount": 15,
-        "size": "M",
-        "color": "gold",
-        "price": 100
-      },
-      {
         "product": {
-          "$oid": "6929479a457fa0a0cc029a39"
+          "$oid": "677000000000000000000004"
         },
-        "productID": "PROD-004",
-        "productName": "Cascade Tennis Bracelet",
-        "productImg": "https://picsum.photos/seed/cascade-bracelet/800",
-        "typeProduct": "bracelet",
-        "quantity": 1,
-        "discount": 15,
-        "size": "L",
-        "color": "silver",
-        "price": 249.5
-      },
-      {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a3a"
-        },
-        "productID": "PROD-005",
-        "productName": "Solitaire Promise Ring",
-        "productImg": "https://picsum.photos/seed/solitaire-ring/800",
-        "typeProduct": "ring",
-        "quantity": 1,
-        "discount": 0,
-        "size": "M",
-        "color": "rose-gold",
-        "price": 139.95
-      }
-    ],
-    "deliverAddress": "456 Sukhumvit Road, Bangkok 10110",
-    "status": {
-      "pass": ["orderPlaced", "processing"],
-      "current": ["processing"]
-    },
-    "cancel": false,
-    "subTotal": 404.53,
-    "shippingPrice": 0,
-    "taxPrice": 28.32,
-    "discount": {
-      "percent": 0,
-      "amount": 50
-    },
-    "totalPrice": 382.85,
-    "coupon": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d10"
-    },
-    "createdAt": {
-      "$date": "2025-12-04T09:45:00.000Z"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676700001a2b3c4d5e6f7d04"
-    },
-    "orderID": "ORD-00004",
-    "trackingNumber": "TRK004G8H9I",
-    "userID": {
-      "$oid": "692759d2b57c82e4b7b3927b"
-    },
-    "totalItem": 2,
-    "detail": [
-      {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a3c"
-        },
-        "productID": "PROD-007",
-        "productName": "Opal Drop Earrings",
-        "productImg": "https://picsum.photos/seed/opal-drop/800",
-        "typeProduct": "earring",
-        "quantity": 1,
-        "discount": 10,
-        "color": "rose-gold",
-        "price": 79
-      },
-      {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a3f"
-        },
-        "productID": "PROD-010",
-        "productName": "Moonlight Pendant Necklace",
-        "productImg": "https://picsum.photos/seed/moonlight-pendant/800",
-        "typeProduct": "necklace",
-        "quantity": 1,
-        "discount": 20,
-        "color": "silver",
-        "price": 159
-      }
-    ],
-    "deliverAddress": "789 Rama IV Road, Pathum Wan, Bangkok 10330",
-    "status": {
-      "pass": ["orderPlaced", "processing", "shipped", "delivered"],
-      "current": ["delivered"]
-    },
-    "cancel": false,
-    "subTotal": 198.3,
-    "shippingPrice": 50,
-    "taxPrice": 13.88,
-    "discount": {
-      "percent": 20,
-      "amount": 39.66
-    },
-    "totalPrice": 222.52,
-    "coupon": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d13"
-    },
-    "createdAt": {
-      "$date": "2025-12-06T16:20:00.000Z"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676700001a2b3c4d5e6f7d05"
-    },
-    "orderID": "ORD-00005",
-    "trackingNumber": "TRK005J1K2L",
-    "userID": {
-      "$oid": "692e7866b06eedc708062fc8"
-    },
-    "totalItem": 1,
-    "detail": [
-      {
-        "product": {
-          "$oid": "692965e80655d074057d9d91"
-        },
-        "productID": "PROD-013",
-        "productName": "Butterfly Ring",
-        "productImg": "/uploads/products/ring1_1764320744835_.webp",
-        "typeProduct": "ring",
         "quantity": 2,
-        "discount": 5,
+        "size": "M",
+        "color": "yellow gold",
+        "price": 360.98
+      },
+      {
+        "_id": {
+          "$oid": "679100000000000000000005"
+        },
+        "product": {
+          "$oid": "677000000000000000000009"
+        },
+        "quantity": 1,
         "size": "L",
-        "color": "gray",
-        "price": 40
+        "color": "clear crystal",
+        "price": 119.59
       }
     ],
-    "deliverAddress": "321 Phetkasem Road, Bang Khae, Bangkok 10160",
+    "deliverAddress": "321 Maple Drive, Houston, TX 77001",
     "status": {
-      "pass": ["orderPlaced"],
-      "current": ["orderPlaced"]
+      "pass": [
+        "orderPlaced",
+        "processing",
+        "shipped"
+      ],
+      "current": [
+        "shipped"
+      ]
     },
     "cancel": false,
-    "subTotal": 76,
-    "shippingPrice": 50,
-    "taxPrice": 5.32,
+    "subTotal": 480.57,
+    "shippingPrice": 8.99,
+    "taxPrice": 38.45,
     "discount": {
       "percent": 15,
-      "amount": 11.4
+      "amount": 72.08
     },
-    "totalPrice": 119.92,
+    "totalPrice": 455.93,
     "coupon": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d14"
+      "$oid": "678000000000000000000004"
     },
     "createdAt": {
-      "$date": "2025-12-08T11:10:00.000Z"
-    }
+      "$date": "2025-12-18T16:45:00.000Z"
+    },
+    "__v": 0
   },
   {
     "_id": {
-      "$oid": "676700001a2b3c4d5e6f7d06"
+      "$oid": "679000000000000000000004"
+    },
+    "orderID": "ORD-00004",
+    "userID": {
+      "$oid": "676000000000000000000006"
+    },
+    "trackingNumber": "TRK4567890",
+    "totalItem": 1,
+    "detail": [
+      {
+        "_id": {
+          "$oid": "679100000000000000000006"
+        },
+        "product": {
+          "$oid": "677000000000000000000002"
+        },
+        "quantity": 1,
+        "size": "M",
+        "color": "white",
+        "price": 382.49
+      }
+    ],
+    "deliverAddress": "987 Cedar Lane, Phoenix, AZ 85001",
+    "status": {
+      "pass": [
+        "orderPlaced"
+      ],
+      "current": [
+        "orderPlaced"
+      ]
+    },
+    "cancel": false,
+    "subTotal": 382.49,
+    "shippingPrice": 10,
+    "taxPrice": 30.6,
+    "discount": {
+      "percent": 15,
+      "amount": 67.31
+    },
+    "totalPrice": 355.78,
+    "coupon": null,
+    "createdAt": {
+      "$date": "2025-12-20T11:20:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "679000000000000000000005"
+    },
+    "orderID": "ORD-00005",
+    "userID": {
+      "$oid": "676000000000000000000002"
+    },
+    "trackingNumber": "TRK5678901",
+    "totalItem": 2,
+    "detail": [
+      {
+        "_id": {
+          "$oid": "679100000000000000000007"
+        },
+        "product": {
+          "$oid": "677000000000000000000008"
+        },
+        "quantity": 1,
+        "size": "M",
+        "color": "silver",
+        "price": 262.49
+      },
+      {
+        "_id": {
+          "$oid": "679100000000000000000008"
+        },
+        "product": {
+          "$oid": "677000000000000000000010"
+        },
+        "quantity": 1,
+        "size": "M",
+        "color": "rose gold",
+        "price": 107.99
+      }
+    ],
+    "deliverAddress": "456 Oak Avenue, Los Angeles, CA 90001",
+    "status": {
+      "pass": [
+        "orderPlaced"
+      ],
+      "current": [
+        "orderPlaced"
+      ]
+    },
+    "cancel": true,
+    "subTotal": 370.48,
+    "shippingPrice": 10,
+    "taxPrice": 29.64,
+    "discount": {
+      "percent": 0,
+      "amount": 0
+    },
+    "totalPrice": 410.12,
+    "coupon": null,
+    "createdAt": {
+      "$date": "2025-12-21T13:00:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "679000000000000000000006"
     },
     "orderID": "ORD-00006",
-    "trackingNumber": "TRK006M3N4O",
     "userID": {
-      "$oid": "692610e1576ff2723c1da0d2"
+      "$oid": "676000000000000000000008"
     },
+    "trackingNumber": "TRK6789012",
     "totalItem": 1,
     "detail": [
       {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a3b"
+        "_id": {
+          "$oid": "679100000000000000000009"
         },
-        "productID": "PROD-006",
-        "productName": "Serene Bar Necklace",
-        "productImg": "https://picsum.photos/seed/serene-bar/800",
-        "typeProduct": "necklace",
-        "quantity": 1,
-        "discount": 0,
-        "color": "silver",
-        "price": 89
-      }
-    ],
-    "deliverAddress": "366/1 soi krungthonburi 6, BanglumpuLang Krongsarn Bangkok",
-    "status": {
-      "pass": ["orderPlaced", "processing", "shipped", "delivered"],
-      "current": ["delivered"]
-    },
-    "cancel": false,
-    "subTotal": 89,
-    "shippingPrice": 50,
-    "taxPrice": 6.23,
-    "discount": {
-      "percent": 0,
-      "amount": 0
-    },
-    "totalPrice": 145.23,
-    "coupon": null,
-    "createdAt": {
-      "$date": "2025-12-09T13:25:00.000Z"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676700001a2b3c4d5e6f7d07"
-    },
-    "orderID": "ORD-00007",
-    "trackingNumber": "TRK007P5Q6R",
-    "userID": {
-      "$oid": "6926112d576ff2723c1da0d8"
-    },
-    "totalItem": 2,
-    "detail": [
-      {
         "product": {
-          "$oid": "692966dea5225e24355bd3bd"
+          "$oid": "677000000000000000000007"
         },
-        "productID": "PROD-018",
-        "productName": "Dainty Chain Bracelet",
-        "productImg": "/uploads/products/bracelet2_1764486435310_.webp",
-        "typeProduct": "bracelet",
         "quantity": 1,
-        "discount": 15,
-        "size": "S",
-        "color": "silver",
-        "price": 100
-      },
-      {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a41"
-        },
-        "productID": "PROD-012",
-        "productName": "Beaded Charm Bracelet",
-        "productImg": "https://picsum.photos/seed/beaded-charm/800",
-        "typeProduct": "bracelet",
-        "quantity": 1,
-        "discount": 12,
         "size": "M",
-        "color": "rose-gold",
-        "price": 69.99
+        "color": "white gold",
+        "price": 737.99
       }
     ],
-    "deliverAddress": "123 Main Street, Bangkok 10100",
+    "deliverAddress": "147 Birch Avenue, Seattle, WA 98101",
     "status": {
-      "pass": ["orderPlaced", "processing"],
-      "current": ["processing"]
+      "pass": [
+        "orderPlaced",
+        "processing",
+        "shipped",
+        "delivered"
+      ],
+      "current": [
+        "delivered"
+      ]
     },
     "cancel": false,
-    "subTotal": 146.58,
-    "shippingPrice": 50,
-    "taxPrice": 10.26,
+    "subTotal": 737.99,
+    "shippingPrice": 0,
+    "taxPrice": 59.04,
     "discount": {
-      "percent": 10,
-      "amount": 14.66
+      "percent": 18,
+      "amount": 162.24
     },
-    "totalPrice": 192.18,
+    "totalPrice": 634.79,
     "coupon": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d0e"
+      "$oid": "678000000000000000000005"
     },
     "createdAt": {
-      "$date": "2025-12-11T08:40:00.000Z"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676700001a2b3c4d5e6f7d08"
+      "$date": "2025-12-05T10:30:00.000Z"
     },
-    "orderID": "ORD-00008",
-    "trackingNumber": "TRK008S7T8U",
-    "userID": {
-      "$oid": "6926117b612b66f266bffa46"
-    },
-    "totalItem": 1,
-    "detail": [
-      {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a3e"
-        },
-        "productID": "PROD-009",
-        "productName": "Twist Band Ring",
-        "productImg": "https://picsum.photos/seed/twist-band/800",
-        "typeProduct": "ring",
-        "quantity": 3,
-        "discount": 5,
-        "size": "M",
-        "color": "silver",
-        "price": 49.99
-      }
-    ],
-    "deliverAddress": "456 Sukhumvit Road, Bangkok 10110",
-    "status": {
-      "pass": ["orderPlaced", "processing", "shipped"],
-      "current": ["shipped"]
-    },
-    "cancel": false,
-    "subTotal": 142.47,
-    "shippingPrice": 50,
-    "taxPrice": 9.97,
-    "discount": {
-      "percent": 0,
-      "amount": 50
-    },
-    "totalPrice": 152.44,
-    "coupon": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d10"
-    },
-    "createdAt": {
-      "$date": "2025-12-12T15:55:00.000Z"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676700001a2b3c4d5e6f7d09"
-    },
-    "orderID": "ORD-00009",
-    "trackingNumber": "TRK009V9W1X",
-    "userID": {
-      "$oid": "692759d2b57c82e4b7b3927b"
-    },
-    "totalItem": 1,
-    "detail": [
-      {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a3d"
-        },
-        "productID": "PROD-008",
-        "productName": "Cuban Link Bracelet",
-        "productImg": "https://picsum.photos/seed/cuban-link/800",
-        "typeProduct": "bracelet",
-        "quantity": 1,
-        "discount": 0,
-        "size": "L",
-        "color": "gold",
-        "price": 129
-      }
-    ],
-    "deliverAddress": "789 Rama IV Road, Pathum Wan, Bangkok 10330",
-    "status": {
-      "pass": ["orderPlaced", "processing", "shipped", "delivered"],
-      "current": ["delivered"]
-    },
-    "cancel": false,
-    "subTotal": 129,
-    "shippingPrice": 50,
-    "taxPrice": 9.03,
-    "discount": {
-      "percent": 0,
-      "amount": 0
-    },
-    "totalPrice": 188.03,
-    "coupon": null,
-    "createdAt": {
-      "$date": "2025-12-13T10:30:00.000Z"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676700001a2b3c4d5e6f7d10"
-    },
-    "orderID": "ORD-00010",
-    "trackingNumber": "TRK010Y2Z3A",
-    "userID": {
-      "$oid": "692e7866b06eedc708062fc8"
-    },
-    "totalItem": 2,
-    "detail": [
-      {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a36"
-        },
-        "productID": "PROD-001",
-        "productName": "Aurora Diamond Ring",
-        "productImg": "https://picsum.photos/seed/aurora-ring/800",
-        "typeProduct": "ring",
-        "quantity": 1,
-        "discount": 10,
-        "size": "L",
-        "color": "silver",
-        "price": 299.99
-      },
-      {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a37"
-        },
-        "productID": "PROD-002",
-        "productName": "Luna Pearl Necklace",
-        "productImg": "https://picsum.photos/seed/luna-necklace/800",
-        "typeProduct": "necklace",
-        "quantity": 1,
-        "discount": 5,
-        "color": "rose-gold",
-        "price": 189
-      }
-    ],
-    "deliverAddress": "321 Phetkasem Road, Bang Khae, Bangkok 10160",
-    "status": {
-      "pass": ["orderPlaced", "processing", "shipped"],
-      "current": ["shipped"]
-    },
-    "cancel": false,
-    "subTotal": 458.94,
-    "shippingPrice": 50,
-    "taxPrice": 32.13,
-    "discount": {
-      "percent": 30,
-      "amount": 137.68
-    },
-    "totalPrice": 403.39,
-    "coupon": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d11"
-    },
-    "createdAt": {
-      "$date": "2025-12-14T12:15:00.000Z"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676700001a2b3c4d5e6f7d11"
-    },
-    "orderID": "ORD-00011",
-    "trackingNumber": "TRK011B4C5D",
-    "userID": {
-      "$oid": "692610e1576ff2723c1da0d2"
-    },
-    "totalItem": 1,
-    "detail": [
-      {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a38"
-        },
-        "productID": "PROD-003",
-        "productName": "Stellar Hoop Earrings",
-        "productImg": "https://picsum.photos/seed/stellar-earrings/800",
-        "typeProduct": "earring",
-        "quantity": 1,
-        "discount": 0,
-        "color": "gold",
-        "price": 59.99
-      }
-    ],
-    "deliverAddress": "366/1 soi krungthonburi 6, BanglumpuLang Krongsarn Bangkok",
-    "status": {
-      "pass": ["orderPlaced"],
-      "current": ["orderPlaced"]
-    },
-    "cancel": false,
-    "subTotal": 59.99,
-    "shippingPrice": 50,
-    "taxPrice": 4.2,
-    "discount": {
-      "percent": 0,
-      "amount": 0
-    },
-    "totalPrice": 114.19,
-    "coupon": null,
-    "createdAt": {
-      "$date": "2025-12-15T14:45:00.000Z"
-    }
-  },
-  {
-    "_id": {
-      "$oid": "676700001a2b3c4d5e6f7d12"
-    },
-    "orderID": "ORD-00012",
-    "trackingNumber": "TRK012E6F7G",
-    "userID": {
-      "$oid": "6926112d576ff2723c1da0d8"
-    },
-    "totalItem": 1,
-    "detail": [
-      {
-        "product": {
-          "$oid": "6929479a457fa0a0cc029a3a"
-        },
-        "productID": "PROD-005",
-        "productName": "Solitaire Promise Ring",
-        "productImg": "https://picsum.photos/seed/solitaire-ring/800",
-        "typeProduct": "ring",
-        "quantity": 1,
-        "discount": 0,
-        "size": "S",
-        "color": "gold",
-        "price": 139.95
-      }
-    ],
-    "deliverAddress": "123 Main Street, Bangkok 10100",
-    "status": {
-      "pass": ["orderPlaced", "processing"],
-      "current": ["processing"]
-    },
-    "cancel": false,
-    "subTotal": 139.95,
-    "shippingPrice": 50,
-    "taxPrice": 9.8,
-    "discount": {
-      "percent": 20,
-      "amount": 27.99
-    },
-    "totalPrice": 171.76,
-    "coupon": {
-      "$oid": "675c1a2b3d4e5f6a7b8c9d13"
-    },
-    "createdAt": {
-      "$date": "2025-12-16T09:20:00.000Z"
-    }
+    "__v": 0
   }
 ]

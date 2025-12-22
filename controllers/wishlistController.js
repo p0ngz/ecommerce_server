@@ -34,7 +34,13 @@ const getAllWishList = async (req, res, next) => {
         : "-createdAt";
 
     const [wishlists, total] = await Promise.all([
-      Wishlist.find(query).skip(skip).sort(sortSpec).limit(limitNum).exec(),
+      Wishlist.find(query)
+        .populate("detail.productId")
+        .populate("userID")
+        .skip(skip)
+        .sort(sortSpec)
+        .limit(limitNum)
+        .exec(),
       Wishlist.countDocuments(query).exec(),
     ]);
     if (!wishlists || wishlists.length === 0) {
@@ -58,7 +64,7 @@ const getAllWishList = async (req, res, next) => {
 // by wishlist id
 const createWishList = async (req, res, next) => {
   try {
-    const { userID, totalItem, detail, totalPrice } = req.body;
+    const { userID, detail } = req.body;
     let newWishlist = {};
     if (!userID || !detail) {
       const err = new Error("userID and detail are required");
@@ -267,7 +273,9 @@ const getWishListByUserId = async (req, res, next) => {
       return next(err);
     }
     const foundWishlist = await Wishlist.find({ userID: userId })
-      .populate("detail.productId", "productName productImg rating discount price")
+      // .populate("detail.productId", "productName productImg rating discount price")
+      .populate("detail.productId")
+      .populate({ path: "userID", select: "username email" })
       .exec();
     if (!foundWishlist || foundWishlist.length === 0) {
       const err = new Error("wishlists not found for this user id: " + userId);
@@ -280,7 +288,40 @@ const getWishListByUserId = async (req, res, next) => {
     next(err);
   }
 };
+const deleteWishlistByUserIdAndProductId = async (req, res, next) => {
+  try {
+    const { userId, productId } = req.params;
 
+    if (!userId || userId === ":userId") {
+      const err = new Error("userId is required");
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    const foundWishlistAndDelete = await Wishlist.findOneAndDelete({
+      $and: [{ userID: userId }, { "detail.productId": productId }],
+    }).exec();
+
+    console.log("foundWishlistAndDelete: ", foundWishlistAndDelete);
+    if (!foundWishlistAndDelete || foundWishlistAndDelete.length === 0) {
+      const err = new Error(
+        "No wishlist found to delete for this user id and product id: " +
+          userId +
+          ", " +
+          productId
+      );
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    res.status(200).json({
+      message: "Wishlist item(s) deleted successfully",
+      wishlist: foundWishlistAndDelete,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 const deleteWishlistByUserId = async (req, res, next) => {
   try {
     const { userId } = req.params;
@@ -320,5 +361,6 @@ module.exports = {
   getWishListByUserId,
   createWishList,
   // updateWishListByWishlistId,
+  deleteWishlistByUserIdAndProductId,
   deleteWishlistByUserId,
 };

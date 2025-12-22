@@ -24,18 +24,9 @@ const productSchema = new mongoose.Schema({
     min: 0,
     max: 5,
   },
-  color: {
-    type: [String],
-    default: [],
-  },
   description: {
     type: String,
     required: [true, "description is required"],
-  },
-  inStock: {
-    type: Number,
-    default: 0,
-    min: 0,
   },
   discount: {
     type: Number,
@@ -43,19 +34,71 @@ const productSchema = new mongoose.Schema({
     min: 0,
     max: 100,
   },
-  size: {
-    type: [String],
-    enum: ["S", "M", "L", "XL"],
-  },
   price: {
     type: Number,
     required: [true, "price is required"],
     min: 0,
   },
+  variants: [
+    {
+      color: {
+        type: String,
+        required: [true, "variants color is required"],
+        set: (v) => v.toLowerCase(),
+      },
+      size: {
+        type: String,
+        enum: ["S", "M", "L", "XL"],
+        required: [true, "variants size is required"],
+        set: (v) => v.toUpperCase(),
+      },
+      inStock: {
+        type: Number,
+        default: 1,
+      },
+      sellingAmount: {
+        type: Number,
+        default: 0,
+      },
+    },
+  ],
+  inStock: {
+    type: Number,
+    default: function () {
+      return this.variants.reduce(
+        (acc, variant) => Number(acc) + Number(variant.inStock),
+        0
+      );
+    },
+  },
+  sellingAmountTotal: {
+    type: Number,
+    default: function () {
+      return this.variants.reduce(
+        (acc, variant) => Number(acc) + Number(variant.sellingAmount),
+        0
+      );
+    },
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
+});
+
+// Automatically update inStock when variants change
+productSchema.pre("save", function (next) {
+  if (this.variants && this.variants.length > 0) {
+    this.inStock = this.variants.reduce(
+      (acc, variant) => Number(acc) + Number(variant.inStock || 0),
+      0
+    );
+    this.sellingAmountTotal = this.variants.reduce(
+      (acc, variant) => Number(acc) + Number(variant.sellingAmount || 0),
+      0
+    );
+  }
+  next();
 });
 
 // auto-generate productID function

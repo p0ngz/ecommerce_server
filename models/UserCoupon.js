@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { Coupon } = require("./Coupon");
 
 const userCouponSchema = new mongoose.Schema({
   userID: {
@@ -25,10 +24,7 @@ const userCouponSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-  orderID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Order",
-  },
+
   isDeleted: { type: Boolean, default: false },
   deletedAt: {
     type: Date,

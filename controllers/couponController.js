@@ -77,7 +77,6 @@ const getAllCoupons = async (req, res, next) => {
       Coupon.find(query).skip(skip).sort(sortSpec).limit(limitNum).exec(),
       Coupon.countDocuments(query).exec(),
     ]);
-
     if (!coupons || coupons.length === 0) {
       const err = new Error("No coupons found");
       err.statusCode = 404;
