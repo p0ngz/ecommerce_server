@@ -52,14 +52,15 @@ const handleLogin = async (req, res, next) => {
         REFRESH_TOKEN_SECRET,
         { expiresIn: "7d" }
       );
-
+      const expiredInMils = 7 * 24 * 60 * 60 * 1000; // 7 days to milliseconds
       foundUser.refreshToken = refreshToken;
+      foundUser.expiredAt = new Date(Date.now() + expiredInMils);
       await foundUser.save();
       res.cookie("jwt", refreshToken, {
         httpOnly: true, // secure against xss (cross site scripting)
         sameSite: "None", // for different domain (frontend + backend)
         secure: false, // cookies send only over https
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days to milliseconds
+        maxAge: expiredInMils,
       });
 
       res.status(200).json({ roles, accessToken });

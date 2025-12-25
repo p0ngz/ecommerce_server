@@ -78,6 +78,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  expiredAt: {
+    type: Date,
+    default: null
+  }
 });
 
 const User = mongoose.model("User", userSchema);
