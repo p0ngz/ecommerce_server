@@ -16,9 +16,10 @@ const credentials = require("./middleware/credentials.js");
 const corsOption = require("./config/corsOption.js");
 const { noRouteHandler } = require("./middleware/noRoutesHandler.js");
 const { startCronJobs } = require("./utils/cronJobs.js");
+const { verifyApiKey } = require("./middleware/verifyApiKey.js");
+const { verifyJwt } = require("./middleware/verifyJwt.js");
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
-const { Blog } = require("./models/Blog.js");
 // start middleware
 /* 
     app.get: for routing handler for GET requests
@@ -46,18 +47,20 @@ app.use(cookieParser()); // for cookie data
 // API routes
 const apiRouterV1 = express.Router();
 // const apiRouterV2 = express.Router();
-apiRouter.use("/register", require("./routes/register.js"));
-apiRouter.use("/auth", require("./routes/auth.js"));
-apiRouter.use("/refresh", require("./routes/refresh.js"));
-apiRouter.use("/logout", require("./routes/logout.js"));
-apiRouter.use("/user", require("./routes/user.js"));
-apiRouter.use("/product", require("./routes/product.js"));
-apiRouter.use("/order", require("./routes/order.js"));
-apiRouter.use("/wishlist", require("./routes/wishlist.js"));
-apiRouter.use("/cartList", require("./routes/cartList.js"));
-apiRouter.use("/blog", require("./routes/blog.js"));
-apiRouter.use("/coupon", require("./routes/coupon.js"));
-apiRouter.use("/userCoupon", require("./routes/userCoupon.js"));
+apiRouterV1.use("/register", verifyApiKey, require("./routes/register.js"));
+apiRouterV1.use("/auth", verifyApiKey, require("./routes/auth.js"));
+apiRouterV1.use("/refresh", verifyApiKey, require("./routes/refresh.js"));
+apiRouterV1.use("/logout", verifyApiKey, require("./routes/logout.js"));
+
+apiRouterV1.use(verifyJwt);
+apiRouterV1.use("/user", require("./routes/user.js"));
+apiRouterV1.use("/product", require("./routes/product.js"));
+apiRouterV1.use("/order", require("./routes/order.js"));
+apiRouterV1.use("/wishlist", require("./routes/wishlist.js"));
+apiRouterV1.use("/cartList", require("./routes/cartList.js"));
+apiRouterV1.use("/blog", require("./routes/blog.js"));
+apiRouterV1.use("/coupon", require("./routes/coupon.js"));
+apiRouterV1.use("/userCoupon", require("./routes/userCoupon.js"));
 
 // Mount all API routes under /api prefix
 app.use("/api", apiRouterV1);
