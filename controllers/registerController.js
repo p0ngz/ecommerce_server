@@ -6,11 +6,14 @@ const {
   passwordRegex,
 } = require("../utils/validation.js");
 const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
-  if (!username || !email || !password) {
+  const { firstName, lastName, username, email, password } = req.body;
+  if (!firstName || !lastName || !username || !email || !password) {
     return res
       .status(400)
-      .json({ message: "username, email and password are required" });
+      .json({
+        message:
+          "firstName, lastName, username, email and password are required",
+      });
   }
 
   if (!username.match(usernameRegex)) {
@@ -44,6 +47,7 @@ const registerUser = async (req, res) => {
       username,
       email,
       password: hashedPwd,
+      information: { firstName, lastName },
     });
     await newUser.save();
     res.status(201).json({ message: `created user successfully:`, username });

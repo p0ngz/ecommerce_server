@@ -38,7 +38,6 @@ app.use(credentials);
 // cors
 app.use(cors(corsOption));
 
-
 app.use("/uploads", express.static("public/uploads")); // when frontend want to use <img src={`http://localhost:3000/uploads/users/${user.userImage}`} />
 app.use(express.urlencoded({ extended: false })); // for form data (Content-Type: application/x-www-form-urlencoded)
 app.use(express.json()); // for json data (Content-Type: application/json)
@@ -46,6 +45,9 @@ app.use(cookieParser()); // for cookie data
 
 // api middleware
 app.use("/register", require("./routes/register.js"));
+app.use("/auth", require("./routes/auth.js"));
+app.use("/refresh", require("./routes/refresh.js"));
+app.use("/logout", require("./routes/logout.js"));
 app.use("/user", require("./routes/user.js"));
 app.use("/product", require("./routes/product.js"));
 app.use("/order", require("./routes/order.js"));
@@ -65,7 +67,7 @@ app.use(logError);
 connectDB(DATABASE_URL).then(() => {
   startCronJobs();
   startServer(app, PORT);
-})
+});
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception: ", err);
   console.log("Server will restart automatically");
