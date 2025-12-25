@@ -43,19 +43,25 @@ app.use(express.urlencoded({ extended: false })); // for form data (Content-Type
 app.use(express.json()); // for json data (Content-Type: application/json)
 app.use(cookieParser()); // for cookie data
 
-// api middleware
-app.use("/register", require("./routes/register.js"));
-app.use("/auth", require("./routes/auth.js"));
-app.use("/refresh", require("./routes/refresh.js"));
-app.use("/logout", require("./routes/logout.js"));
-app.use("/user", require("./routes/user.js"));
-app.use("/product", require("./routes/product.js"));
-app.use("/order", require("./routes/order.js"));
-app.use("/wishlist", require("./routes/wishlist.js"));
-app.use("/cartList", require("./routes/cartList.js"));
-app.use("/blog", require("./routes/blog.js"));
-app.use("/coupon", require("./routes/coupon.js"));
-app.use("/userCoupon", require("./routes/userCoupon.js"));
+// API routes
+const apiRouterV1 = express.Router();
+// const apiRouterV2 = express.Router();
+apiRouter.use("/register", require("./routes/register.js"));
+apiRouter.use("/auth", require("./routes/auth.js"));
+apiRouter.use("/refresh", require("./routes/refresh.js"));
+apiRouter.use("/logout", require("./routes/logout.js"));
+apiRouter.use("/user", require("./routes/user.js"));
+apiRouter.use("/product", require("./routes/product.js"));
+apiRouter.use("/order", require("./routes/order.js"));
+apiRouter.use("/wishlist", require("./routes/wishlist.js"));
+apiRouter.use("/cartList", require("./routes/cartList.js"));
+apiRouter.use("/blog", require("./routes/blog.js"));
+apiRouter.use("/coupon", require("./routes/coupon.js"));
+apiRouter.use("/userCoupon", require("./routes/userCoupon.js"));
+
+// Mount all API routes under /api prefix
+app.use("/api", apiRouterV1);
+// app.use("/api/v2", apiRouterV2);
 
 // error handler
 app.use(noRouteHandler);
