@@ -7,11 +7,9 @@ const userSchema = new mongoose.Schema({
     required: [true, "Username is required"],
     unique: true,
     trim: true,
-    min: [5, "Username must be at least 5 characters"],
-    max: [10, "Username must be at most 10 characters"],
     match: [
-      /^(?=.*[A-Z])[A-Za-z0-9]{5,10}$/,
-      "Username must be 5-10 characters, contain at least one uppercase letter, and only letters and digits",
+      /^[A-Za-z0-9_]+$/,
+      "Username must contain only letters, numbers, and underscores",
     ],
   },
   email: {
@@ -31,9 +29,9 @@ const userSchema = new mongoose.Schema({
 
   // System fields - With defaults
   role: {
-    type: String,
+    type: [String],
     enum: ["customer", "admin", "seller"],
-    default: "customer",
+    default: ["customer"],
   },
   isActive: {
     type: Boolean,
@@ -80,8 +78,8 @@ const userSchema = new mongoose.Schema({
   },
   expiredAt: {
     type: Date,
-    default: null
-  }
+    default: null,
+  },
 });
 
 const User = mongoose.model("User", userSchema);

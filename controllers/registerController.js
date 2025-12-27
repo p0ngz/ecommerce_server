@@ -5,21 +5,18 @@ const {
   emailRegex,
   passwordRegex,
 } = require("../utils/validation.js");
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   const { firstName, lastName, username, email, password } = req.body;
+  console.log("Registering user:", req.body);
   if (!firstName || !lastName || !username || !email || !password) {
-    return res
-      .status(400)
-      .json({
-        message:
-          "firstName, lastName, username, email and password are required",
-      });
+    return res.status(400).json({
+      message: "firstName, lastName, username, email and password are required",
+    });
   }
 
   if (!username.match(usernameRegex)) {
     return res.status(400).json({
-      message:
-        "Username must be 5-10 characters, contain at least one uppercase letter, and only letters and digits",
+      message: "Username must contain only letters, numbers, and underscores",
     });
   }
 
@@ -49,16 +46,12 @@ const registerUser = async (req, res) => {
       password: hashedPwd,
       information: { firstName, lastName },
     });
-    await newUser.save();
+    const result = await newUser.save();
+    console.log("result: ", result);
     res.status(201).json({ message: `created user successfully:`, username });
   } catch (err) {
-    console.error("Error during user registration:", err);
+    next(err);
   }
 };
 
 module.exports = { registerUser };
-
-// res.send: to send message to client
-// res.json: to send json data to client
-// res.status: to set status code of response
-// res.sendStatus: to set status code and send its string representation

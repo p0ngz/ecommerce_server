@@ -1,6 +1,5 @@
-export const verifyJwt = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
-
+const verifyJwt = async (req, res, next) => {
+  const authHeader = req.headers["Authorization"];
   if (!authHeader.startsWith("Bearer ")) {
     const err = new Error("Unauthorized Missing Bearer Token");
     err.statusCode = 401;
@@ -21,3 +20,5 @@ export const verifyJwt = async (req, res, next) => {
     next();
   });
 };
+
+module.exports = { verifyJwt };

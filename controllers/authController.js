@@ -1,4 +1,4 @@
-const { User } = require("../models/userModel");
+const { User } = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -19,20 +19,21 @@ const handleLogin = async (req, res, next) => {
 
     if (!username || !password) {
       const err = new Error("Username and password are required");
-      err.status = 400;
+      err.statusCode = 400;
       throw err;
     }
 
     const foundUser = await User.findOne({ username }).exec();
     if (!foundUser) {
       const err = new Error("Unauthorized");
-      err.status = 401;
+      err.statusCode = 401;
       throw err;
     }
 
     const matchPwd = await bcrypt.compare(password, foundUser.password);
 
     if (matchPwd) {
+      console.log("Password match for user:", username);
       const roles = Object.values(foundUser.role);
 
       const accessToken = jwt.sign(
@@ -62,12 +63,67 @@ const handleLogin = async (req, res, next) => {
         secure: false, // cookies send only over https
         maxAge: expiredInMils,
       });
-
-      res.status(200).json({ roles, accessToken });
+      console.log("roles:  ", roles);
+      console.log("accessToken:  ", accessToken);
+      res.status(200).json({
+        username: foundUser?.username,
+        roles,
+        accessToken,
+      });
+    } else {
+      const err = new Error("Unauthorized");
+      err.statusCode = 401;
+      throw err;
     }
   } catch (error) {
+    next(error);
+  }
+};
+
+const handleRefreshToken = async (req, res, next) => {
+  try {
+    const cookies = req.cookies;
+
+    if (!cookies?.lwt) {
+      const err = new Error("Unauthorized");
+      err.statusCode = 401;
+      return next(err);
+    }
+
+    const refreshToken = cookies.jwt;
+    const foundUser = await User.find({ refreshToken }).exec();
+
+    if (!foundUser) {
+      const err = new Error("Forbidden");
+      err.statusCode = 403;
+      return next(err);
+    }
+
+    // verify
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (err, decoded) => {
+        if (err || foundUser.username !== decoded.username)
+          return res.sendStatus(403);
+        const roles = Object.values(foundUser.roles);
+        const accessToken = jwt.sign(
+          {
+            UserInfo: {
+              username: decoded.username,
+              roles: roles,
+            },
+          },
+          process.env.ACCESS_TOKEN_SECRET,
+          { expiresIn: "30s" }
+        );
+
+        res.status(200).json({ accessToken });
+      }
+    );
+  } catch (err) {
     next(err);
   }
 };
 
-module.exports = { handleLogin };
+module.exports = { handleLogin, handleRefreshToken };

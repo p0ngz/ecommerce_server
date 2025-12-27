@@ -49,7 +49,6 @@ const apiRouterV1 = express.Router();
 // const apiRouterV2 = express.Router();
 apiRouterV1.use("/register", verifyApiKey, require("./routes/register.js"));
 apiRouterV1.use("/auth", verifyApiKey, require("./routes/auth.js"));
-apiRouterV1.use("/refresh", verifyApiKey, require("./routes/refresh.js"));
 apiRouterV1.use("/logout", verifyApiKey, require("./routes/logout.js"));
 
 apiRouterV1.use(verifyJwt);
