@@ -59,7 +59,7 @@ apiRouterV1.use("/wishlist", require("./routes/wishlist.js"));
 apiRouterV1.use("/cartlist", require("./routes/cartList.js"));
 apiRouterV1.use("/blog", require("./routes/blog.js"));
 apiRouterV1.use("/coupon", require("./routes/coupon.js"));
-apiRouterV1.use("/userCoupon", require("./routes/userCoupon.js"));
+apiRouterV1.use("/user-coupon", require("./routes/userCoupon.js"));
 
 // Mount all API routes under /api prefix
 app.use("/api", apiRouterV1);
