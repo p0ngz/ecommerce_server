@@ -179,7 +179,12 @@ const updateUser = async (req, res, next) => {
         newInformation[key] = information[key];
       });
     }
-
+    const duplicateUsername = await User.findOne({ username }).exec();
+    if (duplicateUsername) {
+      const err = new Error("Username is already taken");
+      err.statusCode = 409;
+      return next(err);
+    }
     const foundUser = await User.findById({ _id: id }).exec();
     if (!foundUser) {
       const err = new Error("No User found with id: " + id);
@@ -209,11 +214,7 @@ const updateUser = async (req, res, next) => {
     await foundUser.save();
     return res.status(200).json({
       message: "User updated successfully",
-      user: {
-        id: foundUser._id,
-        username: foundUser.username,
-        information: foundUser.information,
-      },
+      username: foundUser.username,
     });
   } catch (err) {
     next(err);
@@ -240,7 +241,10 @@ const deleteUserById = async (req, res, next) => {
       return next(err);
     }
 
-    return res.status(200).json({ message: "User deleted successfully" });
+    return res.status(200).json({
+      message: "User deleted successfully",
+      deletedUser: foundUserAndDelete,
+    });
   } catch (err) {
     next(err);
   }

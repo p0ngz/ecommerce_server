@@ -65,11 +65,12 @@ const handleLogin = async (req, res, next) => {
       });
       console.log("roles:  ", roles);
       console.log("accessToken:  ", accessToken);
-      res.status(200).json({
-        username: foundUser?.username,
-        roles,
-        accessToken,
-      });
+      res
+        .status(200)
+        .json({
+          user: { username: foundUser?.username, roles: foundUser?.role },
+          accessToken,
+        });
     } else {
       const err = new Error("Unauthorized");
       err.statusCode = 401;

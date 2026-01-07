@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const handleLogout = async (req, res, next) => {
   try {
     const cookies = req.cookies;
-
     if (!cookies?.jwt) {
       const err = new Error("No content");
       err.status = 204;
@@ -27,7 +26,7 @@ const handleLogout = async (req, res, next) => {
     foundUser.refreshToken = ""; //clear refreshToken in db
     await foundUser.save();
 
-    res.clearCookies("jwt", refreshToken, {
+    res.clearCookie("jwt", refreshToken, {
       httpOnly: true,
       sameSite: "None",
       secure: false,
