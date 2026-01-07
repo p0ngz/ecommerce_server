@@ -33,7 +33,6 @@ const handleLogin = async (req, res, next) => {
     const matchPwd = await bcrypt.compare(password, foundUser.password);
 
     if (matchPwd) {
-      console.log("Password match for user:", username);
       const roles = Object.values(foundUser.role);
 
       const accessToken = jwt.sign(
@@ -63,14 +62,10 @@ const handleLogin = async (req, res, next) => {
         secure: false, // cookies send only over https
         maxAge: expiredInMils,
       });
-      console.log("roles:  ", roles);
-      console.log("accessToken:  ", accessToken);
-      res
-        .status(200)
-        .json({
-          user: { username: foundUser?.username, roles: foundUser?.role },
-          accessToken,
-        });
+      res.status(200).json({
+        user: { username: foundUser?.username, roles: foundUser?.role },
+        accessToken,
+      });
     } else {
       const err = new Error("Unauthorized");
       err.statusCode = 401;
@@ -84,15 +79,14 @@ const handleLogin = async (req, res, next) => {
 const handleRefreshToken = async (req, res, next) => {
   try {
     const cookies = req.cookies;
-
-    if (!cookies?.lwt) {
+    if (!cookies?.jwt) {
       const err = new Error("Unauthorized");
       err.statusCode = 401;
       return next(err);
     }
 
     const refreshToken = cookies.jwt;
-    const foundUser = await User.find({ refreshToken }).exec();
+    const foundUser = await User.findOne({ refreshToken: refreshToken }).exec();
 
     if (!foundUser) {
       const err = new Error("Forbidden");
@@ -107,7 +101,7 @@ const handleRefreshToken = async (req, res, next) => {
       (err, decoded) => {
         if (err || foundUser.username !== decoded.username)
           return res.sendStatus(403);
-        const roles = Object.values(foundUser.roles);
+        const roles = Object.values(foundUser.role);
         const accessToken = jwt.sign(
           {
             UserInfo: {
