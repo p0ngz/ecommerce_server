@@ -3,6 +3,10 @@ const router = express.Router();
 const cartListController = require("../controllers/cartListController.js");
 
 router.route("/").get(cartListController.getAllCartLists);
+router
+  .route("/:id")
+  .get(cartListController.getCartListByICartListId)
+  .delete(cartListController.deleteCartListByCartListId);
 
 router
   .route("/user/:userId")
@@ -10,6 +14,7 @@ router
   .post(cartListController.createOrUpdateCartListByUserId)
   .delete(cartListController.deleteCartListByUserId);
 
-router.route("/:id").get(cartListController.getCartListByICartListId);
-router.route("/cartList/:id").delete(cartListController.deleteCartListByCartListId);
+// router
+//   .route("/cartList/:id")
+//   .delete(cartListController.deleteCartListByCartListId);
 module.exports = router;

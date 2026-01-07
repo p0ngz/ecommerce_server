@@ -56,7 +56,7 @@ apiRouterV1.use("/user", require("./routes/user.js"));
 apiRouterV1.use("/product", require("./routes/product.js"));
 apiRouterV1.use("/order", require("./routes/order.js"));
 apiRouterV1.use("/wishlist", require("./routes/wishlist.js"));
-apiRouterV1.use("/cartList", require("./routes/cartList.js"));
+apiRouterV1.use("/cartlist", require("./routes/cartList.js"));
 apiRouterV1.use("/blog", require("./routes/blog.js"));
 apiRouterV1.use("/coupon", require("./routes/coupon.js"));
 apiRouterV1.use("/userCoupon", require("./routes/userCoupon.js"));

@@ -214,7 +214,7 @@ const createOrUpdateCartListByUserId = async (req, res, next) => {
 
       return res.status(200).json({
         message: "CartList updated from duplicated",
-        duplicateCartList,
+        cartList: duplicateCartList,
       });
     }
     newCartList.userID = userId;
@@ -229,25 +229,25 @@ const createOrUpdateCartListByUserId = async (req, res, next) => {
 
     res.status(201).json({
       message: "CartList created successfully",
-      createdCartList,
+      cartList: createdCartList,
     });
   } catch (err) {
     next(err);
   }
 };
 
-const updateCartListByCartListId = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    if (!id || id === ":id") {
-      const err = new Error("CartList id is required");
-      err.statusCode = 400;
-      return next(err);
-    }
-  } catch (err) {
-    next(err);
-  }
-};
+// const updateCartListByCartListId = async (req, res, next) => {
+//   try {
+//     const { id } = req.params;
+//     if (!id || id === ":id") {
+//       const err = new Error("CartList id is required");
+//       err.statusCode = 400;
+//       return next(err);
+//     }
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 const deleteCartListByCartListId = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -268,7 +268,7 @@ const deleteCartListByCartListId = async (req, res, next) => {
       .status(200)
       .json({
         message: "CartList deleted successfully",
-        foundAndDeletedCartList,
+        deletedCartList: foundAndDeletedCartList,
       });
   } catch (err) {
     next(err);
@@ -310,7 +310,7 @@ module.exports = {
   getCartListByICartListId,
   getCartListByUserId,
   createOrUpdateCartListByUserId,
-  updateCartListByCartListId,
+  // updateCartListByCartListId,
   deleteCartListByCartListId,
   deleteCartListByUserId,
 };
