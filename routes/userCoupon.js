@@ -25,9 +25,9 @@ router
     userCouponController.updateUserCouponByUserIdAndCouponId
   ); // id: couponID, userId: userID
 router
-  .route("/userId/:id")
+  .route("/user/:id")
   .get(checkExpireCoupon, userCouponController.getUserCouponByUserId);
 router
-  .route("/couponId/:id")
+  .route("/coupon/:id")
   .get(checkExpireCoupon, userCouponController.getUserCouponByCouponId);
 module.exports = router;

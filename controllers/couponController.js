@@ -84,6 +84,7 @@ const getAllCoupons = async (req, res, next) => {
     }
 
     res.status(200).json({
+      message: "Get all coupons successfully",
       count: coupons.length,
       total,
       page: pageNum,
@@ -117,7 +118,10 @@ const getCouponByCouponId = async (req, res, next) => {
       return next(err);
     }
 
-    res.status(200).json(foundCouponById);
+    res.status(200).json({
+      message: "Get coupon successfully",
+      coupon: foundCouponById,
+    });
   } catch (err) {
     next(err);
   }
@@ -438,9 +442,11 @@ const updateCouponById = async (req, res, next) => {
       createdBy: createdByFormat,
     };
 
-    const updatedCoupon = await Coupon.findByIdAndUpdate(id, {
-      $set: updateCoupon,
-    });
+    const updatedCoupon = await Coupon.findByIdAndUpdate(
+      id,
+      { $set: updateCoupon },
+      { new: true }
+    );
 
     if (!updatedCoupon) {
       console.log("updatedCoupon", updatedCoupon);
@@ -449,7 +455,10 @@ const updateCouponById = async (req, res, next) => {
       return next(err);
     }
 
-    res.status(200).json(updatedCoupon);
+    res.status(200).json({
+      message: "Updated coupon successfully",
+      coupon: updatedCoupon,
+    });
   } catch (err) {
     next(err);
   }
@@ -493,9 +502,10 @@ const softDeleteCouponById = async (req, res, next) => {
       return next(err);
     }
 
-    res
-      .status(200)
-      .json({ message: `Coupon id ${id} is soft deleted successfully` });
+    res.status(200).json({
+      message: "Coupon soft deleted successfully",
+      coupon: updatedDeleteCoupon,
+    });
   } catch (err) {
     next(err);
   }
@@ -523,9 +533,10 @@ const hardDeleteCouponById = async (req, res, next) => {
       return next(err);
     }
 
-    res
-      .status(200)
-      .json({ message: `Coupon id ${id} is hard deleted successfully` });
+    res.status(200).json({
+      message: "Coupon hard deleted successfully",
+      coupon: hardDeletedCoupon,
+    });
   } catch (err) {
     next(err);
   }

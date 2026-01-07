@@ -66,12 +66,15 @@ const getAllUserCoupons = async (req, res, next) => {
     ]);
 
     if (userCoupons.length === 0) {
-      return res.status(200).json({ message: "No userCoupons found" });
+      const err = new Error("No userCoupons found");
+      err.statusCode = 404;
+      return next(err);
     }
 
     res.status(200).json({
+      message: "Get all user coupons successfully",
       count: userCoupons.length,
-      totalCoupon,
+      total: totalCoupon,
       page: pageNum,
       limit: limitNum,
       userCoupons,
@@ -99,12 +102,15 @@ const getUserCouponByUserCouponId = async (req, res, next) => {
       .exec();
     console.log("foundUserCoupon: ", foundUserCoupon);
     if (!foundUserCoupon) {
-      return res.status(200).json({ message: "userCoupon not found" });
+      const err = new Error("UserCoupon not found");
+      err.statusCode = 404;
+      return next(err);
     }
 
-    res
-      .status(200)
-      .json({ count: foundUserCoupon.length, userCoupon: foundUserCoupon });
+    res.status(200).json({
+      message: "Get user coupon successfully",
+      userCoupon: foundUserCoupon,
+    });
   } catch (err) {
     next(err);
   }
@@ -151,12 +157,13 @@ const getUserCouponByUserId = async (req, res, next) => {
     const foundUserCouponByUserId = await query.lean().exec();
 
     if (!foundUserCouponByUserId || foundUserCouponByUserId.length === 0) {
-      return res
-        .status(200)
-        .json({ message: "No userCoupons found for this user ID" });
+      const err = new Error("No userCoupons found for this user ID");
+      err.statusCode = 404;
+      return next(err);
     }
 
     res.status(200).json({
+      message: "Get user coupons by user ID successfully",
       count: foundUserCouponByUserId.length,
       userCoupons: foundUserCouponByUserId,
     });
@@ -184,12 +191,13 @@ const getUserCouponByCouponId = async (req, res, next) => {
     }).exec();
 
     if (!foundUserCouponByCouponId || foundUserCouponByCouponId.length === 0) {
-      return res
-        .status(200)
-        .json({ message: "No userCoupons found for this coupon ID" });
+      const err = new Error("No userCoupons found for this coupon ID");
+      err.statusCode = 404;
+      return next(err);
     }
 
     res.status(200).json({
+      message: "Get user coupons by coupon ID successfully",
       count: foundUserCouponByCouponId.length,
       userCoupons: foundUserCouponByCouponId,
     });
@@ -238,9 +246,10 @@ const createMapCouponWithUser = async (req, res, next) => {
     foundCoupon.distributionCount = foundCoupon.distributionCount + 1;
 
     await foundCoupon.save();
-    res
-      .status(201)
-      .json({ message: "userCoupon created", data: savedCouponWithUser });
+    res.status(201).json({
+      message: "Created user coupon successfully",
+      userCoupon: savedCouponWithUser,
+    });
   } catch (err) {
     next(err);
   }
@@ -275,12 +284,16 @@ const updateUserCouponByUserIdAndCouponId = async (req, res, next) => {
       $and: [{ userID: userId }, { couponID: id }],
     }).exec();
     const foundCoupon = await Coupon.findById(id).exec();
-    
+
     if (!foundUserCoupon) {
-      return res.status(200).json({ message: "userCoupon mapping not found" });
+      const err = new Error("UserCoupon mapping not found");
+      err.statusCode = 404;
+      return next(err);
     }
     if (!foundCoupon) {
-      return res.status(200).json({ message: "Coupon not found" });
+      const err = new Error("Coupon not found");
+      err.statusCode = 404;
+      return next(err);
     }
 
     // update in UserCoupon collection => status, usedAt
@@ -297,7 +310,7 @@ const updateUserCouponByUserIdAndCouponId = async (req, res, next) => {
     await foundCoupon.save();
 
     return res.status(200).json({
-      message: "userCoupon and coupon updated successfully",
+      message: "Updated user coupon successfully",
       userCoupon: foundUserCoupon,
       coupon: foundCoupon,
     });
@@ -319,18 +332,21 @@ const softDeleteUserCouponByUserCouponId = async (req, res, next) => {
       error.statusCode = 400;
       return next(error);
     }
-    const softDeletedUseCoupon = await UserCoupon.findByIdAndUpdate(id, {
-      $set: { isDeleted: true, deletedAt: new Date() },
-    }).exec();
+    const softDeletedUseCoupon = await UserCoupon.findByIdAndUpdate(
+      id,
+      { $set: { isDeleted: true, deletedAt: new Date() } },
+      { new: true }
+    ).exec();
 
     if (!softDeletedUseCoupon) {
       const error = new Error("userCoupon not found");
       error.statusCode = 404;
       return next(error);
     }
-    return res
-      .status(200)
-      .json({ message: `userCoupon id ${id} soft deleted successfully` });
+    return res.status(200).json({
+      message: "User coupon soft deleted successfully",
+      userCoupon: softDeletedUseCoupon,
+    });
   } catch (err) {
     next(err);
   }
@@ -357,9 +373,10 @@ const hardDeleteUserCouponByUserCouponId = async (req, res, next) => {
       return next(error);
     }
 
-    return res
-      .status(200)
-      .json({ message: `userCoupon id ${id} hard deleted successfully` });
+    return res.status(200).json({
+      message: "User coupon hard deleted successfully",
+      userCoupon: hardDeletedUserCoupon,
+    });
   } catch (err) {
     next(err);
   }
