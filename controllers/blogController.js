@@ -5,8 +5,8 @@ const fs = require("fs");
 const getAllBlogs = async (req, res, next) => {
   try {
     const {
-      from = new Date("2025-11-26"),
-      to = new Date(),
+      from,
+      to,
       search,
       sort = "-createdAt",
       page = 1,
@@ -49,6 +49,7 @@ const getAllBlogs = async (req, res, next) => {
     }
 
     return res.status(200).json({
+      message: "Get all blogs successfully",
       count: blogs.length,
       total,
       page: pageNum,
@@ -74,8 +75,16 @@ const getBlogById = async (req, res, next) => {
       return next(err);
     }
     const foundBlog = await Blog.findById(id);
+    if (!foundBlog) {
+      const err = new Error("Blog not found");
+      err.statusCode = 404;
+      return next(err);
+    }
 
-    return res.status(200).json(foundBlog);
+    return res.status(200).json({
+      message: "Get blog successfully",
+      blog: foundBlog,
+    });
   } catch (err) {
     next(err);
   }
@@ -130,9 +139,12 @@ const createBlog = async (req, res, next) => {
       err.statusCode = 500;
       return next(err);
     }
-    return res.status(201).json(savedBlog);
+    return res.status(201).json({
+      message: "Created blog successfully",
+      blog: savedBlog,
+    });
   } catch (err) {
-     next(err);
+    next(err);
   }
 };
 
@@ -196,9 +208,12 @@ const updateBlogById = async (req, res, next) => {
       err.statusCode = 500;
       return next(err);
     }
-    return res.status(200).json(updatedBlog);
+    return res.status(200).json({
+      message: "Updated blog successfully",
+      blog: updatedBlog,
+    });
   } catch (err) {
-     next(err);
+    next(err);
   }
 };
 
@@ -218,9 +233,12 @@ const deleteBlogById = async (req, res, next) => {
       return res.status(404).json({ message: "No blog found with id: " + id });
     }
 
-    res.status(200).json({ message: "Blog deleted successfully" });
+    res.status(200).json({
+      message: "Deleted blog successfully",
+      blog: deletedBlog,
+    });
   } catch (err) {
-    next(err)
+    next(err);
   }
 };
 

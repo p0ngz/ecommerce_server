@@ -91,6 +91,7 @@ const getAllOrders = async (req, res, next) => {
       return next(err);
     }
     return res.status(200).json({
+      message: "Get all orders successfully",
       count: orders.length,
       total,
       page: pageNum,
@@ -124,7 +125,10 @@ const getOrderByOrderId = async (req, res, next) => {
       return next(err);
     }
 
-    return res.status(200).json(foundOrder);
+    return res.status(200).json({
+      message: "Get order successfully",
+      order: foundOrder,
+    });
   } catch (err) {
     next(err);
   }
@@ -336,7 +340,10 @@ const createOrder = async (req, res, next) => {
         }
       );
     }
-    res.status(201).json(savedOrder);
+    res.status(201).json({
+      message: "Created order successfully",
+      order: savedOrder,
+    });
   } catch (err) {
     next(err);
   }
@@ -470,13 +477,15 @@ const updateOrderByOrderId = async (req, res, next) => {
       return next(err);
     }
 
-    return res.status(200).json(foundAndUpdateOrder);
+    return res.status(200).json({
+      message: "Updated order successfully",
+      order: foundAndUpdateOrder,
+    });
   } catch (err) {
     next(err);
   }
 };
 
-// delete order by order id
 const deleteOrderByOrderId = async (req, res, next) => {
   try {
     const { id } = req.params;
