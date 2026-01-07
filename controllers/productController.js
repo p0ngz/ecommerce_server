@@ -14,8 +14,8 @@ const getAllProducts = async (req, res, next) => {
       size,
       inStock,
       search,
-      from = new Date("2025-11-26"), // createdAt from (ISO date)
-      to = new Date(), // createdAt to (ISO date)
+      from, // createdAt from (ISO date) - no default
+      to, // createdAt to (ISO date) - no default
       page = 1,
       limit = 10,
       sort = "-createdAt",
@@ -124,6 +124,8 @@ const getAllProducts = async (req, res, next) => {
       Product.aggregate(pipeline),
       Product.aggregate([matchStage, { $count: "total" }]),
     ]);
+    console.log("products: ", products);
+    console.log("totalResult: ", totalResult);
     const total = totalResult[0]?.total || 0;
     if (!products || products.length === 0) {
       const err = new Error("No Products found");
@@ -318,9 +320,52 @@ const updateProductById = async (req, res, next) => {
     next(err);
   }
 };
-
-// delete product
+// soft delete product
 const deleteProductById = async (req, res, next) => {
+  try {
+    const { id } = req?.params;
+    const { userId } = req.body;
+
+    if (!id || id === ":id") {
+      const err = new Error("id parameter is required");
+      err.statusCode = 400;
+      return next(err);
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      const err = new Error("Invalid product id format");
+      err.statusCode = 400;
+      return next(err);
+    }
+    const idUserDeleteProduct = await User.findById(userId, { _id: 1 }).exec();
+    if (!idUserDeleteProduct) {
+      const err = new Error("User not found to delete product");
+      err.statusCode = 404;
+      return next(err);
+    }
+    const updateDeleteProduct = {
+      isDeleted: true,
+      deletedBy: idUserDeleteProduct._id,
+      deletedAt: new Date(),
+    };
+    const updatedDeleteProduct = await Product.findByIdAndUpdate(
+      { _id: id },
+      updateDeleteProduct,
+      { new: true }
+    ).exec();
+    if (!updatedDeleteProduct) {
+      const err = new Error("Not found product with id: " + id);
+      err.statusCode = 404;
+      return next(err);
+    }
+    res
+      .status(200)
+      .json({ message: `Product id ${id} is soft deleted successfully` });
+  } catch (err) {
+    next(err);
+  }
+};
+// hard delete product
+const hardDeleteProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
     if (!id || id === ":id") {
@@ -338,7 +383,7 @@ const deleteProductById = async (req, res, next) => {
 
     res
       .status(200)
-      .json({ message: "Deleted product successfully", deletedProduct });
+      .json({ message: "Deleted(hard) product successfully", deletedProduct });
   } catch (err) {
     next(err);
   }
@@ -346,26 +391,26 @@ const deleteProductById = async (req, res, next) => {
 
 // get product by types
 // earring, necklace, ring, bracelet
-const getProductByType = async (req, res, next) => {
-  try {
-    const { type } = req.params;
-    if (!type || type === ":type") {
-      const err = new Error("type parameter is required");
-      err.statusCode = 400;
-      return next(err);
-    }
-    const formatType = type.toLowerCase();
-    const productFromType = await Product.find({ typeProduct: formatType });
-    if (!productFromType || productFromType.length === 0) {
-      const err = new Error("No products found for type: " + type);
-      err.statusCode = 404;
-      return next(err);
-    }
-    return res.status(200).json(productFromType);
-  } catch (err) {
-    next(err);
-  }
-};
+// const getProductByType = async (req, res, next) => {
+//   try {
+//     const { type } = req.params;
+//     if (!type || type === ":type") {
+//       const err = new Error("type parameter is required");
+//       err.statusCode = 400;
+//       return next(err);
+//     }
+//     const formatType = type.toLowerCase();
+//     const productFromType = await Product.find({ typeProduct: formatType });
+//     if (!productFromType || productFromType.length === 0) {
+//       const err = new Error("No products found for type: " + type);
+//       err.statusCode = 404;
+//       return next(err);
+//     }
+//     return res.status(200).json(productFromType);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 const getNewestProduct = async (req, res, next) => {
   try {
     const { limit } = req.query;
@@ -525,9 +570,10 @@ module.exports = {
   createNewProduct,
   updateProductById,
   deleteProductById,
-  getProductByType,
+  // getProductByType,
   getNewestProduct,
   getTopProduct,
   getTopRatingProduct,
   updateProductImageById,
+  hardDeleteProductById,
 };

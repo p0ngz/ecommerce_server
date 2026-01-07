@@ -470,7 +470,6 @@ const softDeleteCouponById = async (req, res, next) => {
       return next(err);
     }
     const idUserDeleteCoupon = await User.findById(userId, { _id: 1 }).exec();
-    console.log("idUserDeleteCoupon", idUserDeleteCoupon);
     if (!idUserDeleteCoupon) {
       const err = new Error("User not found to delete coupon");
       err.statusCode = 404;
@@ -481,9 +480,13 @@ const softDeleteCouponById = async (req, res, next) => {
       deletedBy: idUserDeleteCoupon,
       deletedAt: new Date(),
     };
-    const updatedDeleteCoupon = await Coupon.findByIdAndUpdate(id, {
-      $set: updateDeleteStatusCoupon,
-    });
+    const updatedDeleteCoupon = await Coupon.findByIdAndUpdate(
+      id,
+      {
+        $set: updateDeleteStatusCoupon,
+      },
+      { new: true }
+    ).exec();
     if (!updatedDeleteCoupon) {
       const err = new Error("Failed to delete coupon with id: " + id);
       err.statusCode = 500;
