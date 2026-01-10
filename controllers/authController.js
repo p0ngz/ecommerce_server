@@ -18,20 +18,18 @@ const handleLogin = async (req, res, next) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      const err = new Error("Username and password are required");
-      err.statusCode = 400;
-      throw err;
+      return res
+        .status(400)
+        .json({ message: "Username and password are required" });
     }
 
     const foundUser = await User.findOne({ username }).exec();
     if (!foundUser) {
-      const err = new Error("Unauthorized");
-      err.statusCode = 401;
-      throw err;
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     const matchPwd = await bcrypt.compare(password, foundUser.password);
-
+    console.log("foundUser: ", foundUser);
     if (matchPwd) {
       const roles = Object.values(foundUser.role);
 
@@ -63,13 +61,11 @@ const handleLogin = async (req, res, next) => {
         maxAge: expiredInMils,
       });
       res.status(200).json({
-        user: { username: foundUser?.username, roles: foundUser?.role },
+        user: { userId: foundUser?._id.toString() , username: foundUser?.username, roles: foundUser?.role },
         accessToken,
       });
     } else {
-      const err = new Error("Unauthorized");
-      err.statusCode = 401;
-      throw err;
+      return res.status(401).json({ message: "Unauthorized" });
     }
   } catch (error) {
     next(error);
@@ -79,6 +75,7 @@ const handleLogin = async (req, res, next) => {
 const handleRefreshToken = async (req, res, next) => {
   try {
     const cookies = req.cookies;
+    console.log("cookie: ", cookies);
     if (!cookies?.jwt) {
       const err = new Error("Unauthorized");
       err.statusCode = 401;

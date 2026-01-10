@@ -6,7 +6,6 @@ router
   .get(wishlistController.getAllWishList)
   .post(wishlistController.createWishList);
 
-// 1user -> 1 wishlist -> many products
 
 router
   .route("/user/:userId")

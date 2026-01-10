@@ -51,7 +51,7 @@ apiRouterV1.use("/register", verifyApiKey, require("./routes/register.js"));
 apiRouterV1.use("/auth", verifyApiKey, require("./routes/auth.js"));
 apiRouterV1.use("/logout", verifyApiKey, require("./routes/logout.js"));
 
-apiRouterV1.use(verifyJwt);
+// apiRouterV1.use(verifyJwt);
 apiRouterV1.use("/user", require("./routes/user.js"));
 apiRouterV1.use("/product", require("./routes/product.js"));
 apiRouterV1.use("/order", require("./routes/order.js"));

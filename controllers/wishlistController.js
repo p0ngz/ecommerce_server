@@ -65,7 +65,6 @@ const getAllWishList = async (req, res, next) => {
 const createWishList = async (req, res, next) => {
   try {
     const { userID, detail } = req.body;
-    let newWishlist = {};
     if (!userID || !detail) {
       const err = new Error("userID and detail are required");
       err.statusCode = 400;
@@ -93,16 +92,27 @@ const createWishList = async (req, res, next) => {
       err.statusCode = 400;
       return next(err);
     }
+    const duplicateWishlist = await Wishlist.findOne({
+      userID,
+      "detail.productId": detail.productId,
+    }).exec();
 
+    if (duplicateWishlist) {
+      const err = new Error(
+        "Wishlist for this product already exists for the user"
+      );
+      err.statusCode = 409;
+      return next(err);
+    }
+    
     const detailFormat = {
       productId: detail.productId,
     };
 
-    newWishlist.userID = userID;
-    newWishlist.detail = detailFormat;
-    // newWishlist.totalPrice = totalPriceNum;
-
-    const createdWishlist = new Wishlist(newWishlist);
+    const createdWishlist = new Wishlist({
+      userID: userID,
+      detail: detailFormat,
+    });
 
     const savedWishlist = await createdWishlist.save();
     if (!savedWishlist) {
@@ -272,18 +282,62 @@ const getWishListByUserId = async (req, res, next) => {
       err.statusCode = 400;
       return next(err);
     }
-    const foundWishlist = await Wishlist.find({ userID: userId })
-      // .populate("detail.productId", "productName productImg rating discount price")
-      .populate("detail.productId")
-      .populate({ path: "userID", select: "username email" })
-      .exec();
-    if (!foundWishlist || foundWishlist.length === 0) {
-      const err = new Error("wishlists not found for this user id: " + userId);
-      err.statusCode = 404;
-      return next(err);
-    }
+    // const foundWishlist = await Wishlist.find({ userID: userId })
+    //   // .populate("detail.productId", "productName productImg rating discount price")
+    //   .populate("detail.productId")
+    //   .populate({ path: "userID", select: "username email" })
+    //   .exec();
+    // if (!foundWishlist || foundWishlist.length === 0) {
+    //   const err = new Error("wishlists not found for this user id: " + userId);
+    //   err.statusCode = 404;
+    //   return next(err);
+    // }
 
-    res.status(200).json(foundWishlist);
+    // res.status(200).json(foundWishlist);
+    const id = new mongoose.Types.ObjectId(req.params.userId);
+    const wishlist = await Wishlist.aggregate([
+      {
+        $match: { userID: id },
+      },
+      // join product together
+      {
+        $lookup: {
+          from: "products",
+          localField: "detail.productId",
+          foreignField: "_id",
+          as: "productData",
+        },
+      },
+      // convert array to object
+      {
+        $unwind: "$productData",
+      },
+      // group wishlist user
+      {
+        $group: {
+          _id: "$userID",
+          wishlists: {
+            $push: {
+              wishlistId: "$_id",
+              product: "$productData",
+              createdAt: "$createdAt",
+            },
+          },
+        },
+      },
+    ]);
+
+    console.log("wishlist: ", wishlist);
+    // if (!wishlist || wishlist.wishlists.length === 0) {
+    //   const err = new Error("wishlists not found for this user id: " + userId);
+    //   err.statusCode = 404;
+    //   return next(err);
+    // }
+
+    res.status(200).json({
+      message: "Wishlist fetched successfully",
+      wishlist,
+    });
   } catch (err) {
     next(err);
   }

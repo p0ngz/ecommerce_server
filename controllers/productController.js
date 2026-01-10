@@ -525,10 +525,7 @@ const updateProductImageById = async (req, res, next) => {
       err.statusCode = 400;
       return next(err);
     }
-    const productById = await Product.findById(id, {
-      productName: 1,
-      productImg: 1,
-    }).exec();
+    const productById = await Product.findById(id).exec();
     if (!productById) {
       const err = new Error("No product found with id: " + id);
       err.statusCode = 404;

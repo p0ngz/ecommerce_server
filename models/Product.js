@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema({
   },
   typeProduct: {
     type: String,
-    enum: ["earring", "necklace", "ring", "bracelet"],
+    enum: ["earring", "necklace", "ring", "bracelet", "gold jewels", "pendants"],
     required: [true, "typeProduct is required"],
   },
   rating: {
