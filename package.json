@@ -25,9 +25,11 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.20.0",
     "multer": "^2.0.2",
     "nanoid": "^5.1.6",
+    "node-cron": "^4.2.1",
     "uuid": "^13.0.0"
   },
   "devDependencies": {

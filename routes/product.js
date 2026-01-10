@@ -11,7 +11,7 @@ router
     productController.createNewProduct
   );
 
-router.get("/type/:type", productController.getProductByType);
+// router.get("/type/:type", productController.getProductByType);
 router.get("/newest", productController.getNewestProduct);
 router.get("/top", productController.getTopProduct);
 router.get("/rating", productController.getTopRatingProduct);
@@ -29,6 +29,8 @@ router
     productController.updateProductById
   )
   .delete(productController.deleteProductById);
+
+router.delete("/:id/hard", productController.hardDeleteProductById);
 
 
 module.exports = router;

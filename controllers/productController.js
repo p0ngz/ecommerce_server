@@ -1,81 +1,222 @@
-const { Product } = require("../model/Product.js");
+const { Product } = require("../models/Product.js");
+const mongoose = require("mongoose");
 const path = require("path");
 const fs = require("fs");
 
 // get all products
-const getAllProducts = async (req, res) => {
+const getAllProducts = async (req, res, next) => {
   try {
-    const products = await Product.find().exec();
-    if (!products)
-      return res.status(404).json({ message: "No products found" });
+    const {
+      typeProduct,
+      priceMin = 0,
+      priceMax,
+      color,
+      size,
+      inStock,
+      search,
+      from, // createdAt from (ISO date) - no default
+      to, // createdAt to (ISO date) - no default
+      page = 1,
+      limit = 10,
+      sort = "-createdAt",
+    } = req.query;
 
-    res.status(200).json(products);
+    const query = {};
+    if (typeProduct) {
+      query.typeProduct = typeProduct.toLowerCase();
+    }
+
+    if (priceMin || priceMax) {
+      query.price = {};
+      if (priceMin) query.price.$gte = Number(priceMin);
+      if (priceMax) query.price.$lte = Number(priceMax);
+    }
+
+    if (Array.isArray(color) && color.length > 0) {
+      query["variants.color"] = {
+        $in: color.map((color) => color.toLowerCase()),
+      };
+    }
+    const colors =
+      Array.isArray(color) && color.length > 0
+        ? color.map((c) => c.toLowerCase())
+        : color
+        ? [color.toLowerCase()]
+        : null;
+    const sizes =
+      Array.isArray(size) && size.length > 0
+        ? size.map((s) => s.toUpperCase())
+        : size
+        ? [size.toUpperCase()]
+        : null;
+
+    if (inStock) {
+      query["variants.inStock"] = { $gte: 0 };
+    }
+    if (search) {
+      query.productName = { $regex: search, $options: "i" };
+    }
+    if (from || to) {
+      query.createdAt = {};
+      if (from) query.createdAt.$gte = new Date(from);
+      if (to) query.createdAt.$lte = new Date(to);
+    }
+    const inStockNum = inStock !== undefined ? Number(inStock) : null;
+    const pageRaw = typeof page === "string" ? page.trim() : page;
+    const limitRaw = typeof limit === "string" ? limit.trim() : limit;
+    const pageParsed = Number(pageRaw);
+    const limitParsed = Number(limitRaw);
+
+    const pageNum =
+      Number.isFinite(pageParsed) && pageParsed > 0 ? pageParsed : 1;
+    const limitNum =
+      Number.isFinite(limitParsed) && limitParsed > 0 ? limitParsed : 10;
+    const skip = pageNum > 0 ? (pageNum - 1) * limitNum : 0;
+    const sortSpec =
+      typeof sort === "string" && sort.trim() !== ""
+        ? sort.trim()
+        : "-createdAt";
+    const matchStage = { $match: query };
+    const projectStage = {
+      $project: {
+        productID: 1,
+        productName: 1,
+        productImg: 1,
+        typeProduct: 1,
+        rating: 1,
+        price: 1,
+        discount: 1,
+        createdAt: 1,
+
+        variants: {
+          $filter: {
+            input: "$variants",
+            as: "v",
+            cond: {
+              $and: [
+                ...(colors ? [{ $in: ["$$v.color", colors] }] : []),
+                ...(sizes ? [{ $in: ["$$v.size", sizes] }] : []),
+                ...(inStockNum !== null
+                  ? [{ $gte: ["$$v.inStock", inStockNum] }]
+                  : []),
+              ],
+            },
+          },
+        },
+      },
+    };
+    const sortStage = {
+      $sort: sortSpec.startsWith("-")
+        ? { [sortSpec.slice(1)]: -1 }
+        : { [sortSpec]: 1 },
+    };
+
+    const skipStage = { $skip: skip };
+    const limitStage = { $limit: limitNum };
+    const pipeline = [
+      matchStage,
+      projectStage,
+      sortStage,
+      skipStage,
+      limitStage,
+    ];
+    const [products, totalResult] = await Promise.all([
+      Product.aggregate(pipeline),
+      Product.aggregate([matchStage, { $count: "total" }]),
+    ]);
+    console.log("products: ", products);
+    console.log("totalResult: ", totalResult);
+    const total = totalResult[0]?.total || 0;
+    if (!products || products.length === 0) {
+      const err = new Error("No Products found");
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    res.status(200).json({
+      count: products.length,
+      total,
+      page: pageNum,
+      limit: limitNum,
+      products,
+    });
   } catch (err) {
-    console.error("Error fetching products:", err);
-    return res.status(500).json({ message: "Internal server error" });
+    next(err);
   }
 };
 
 // get product by id
-const getProductById = async (req, res) => {
+const getProductById = async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
 
-    if (!id)
-      return res.status(400).json({ message: "id parameter is required" });
-    const product = await Product.findById({ _id: id }).exec();
-    if (!product)
-      return res
-        .status(404)
-        .json({ message: "No product found with id: " + id });
+    if (!id || id === ":id") {
+      const err = new Error("id parameter is required");
+      err.statusCode = 400;
+      return next(err);
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      const err = new Error("Invalid product id format");
+      err.statusCode = 400;
+      return next(err);
+    }
+    const foundProduct = await Product.findById({ _id: id }).exec();
+    if (!foundProduct) {
+      const err = new Error("No product found with id: " + id);
+      err.statusCode = 404;
+      return next(err);
+    }
 
-    return res.status(200).json(product);
+    return res.status(200).json(foundProduct);
   } catch (err) {
-    console.error("Error fetching product by id:", err);
-    return res.status(500).json({ message: "Internal server error" });
+    next(err);
   }
 };
 
 // create new product
-const createNewProduct = async (req, res) => {
+const createNewProduct = async (req, res, next) => {
   try {
     const {
       productName,
       typeProduct,
       rating,
-      color,
       description,
-      inStock,
       discount,
-      size,
       price,
+      variants: variantsParse,
     } = req.body;
-
     let productImagePath;
     const duplicateProduct = await Product.findOne({
       productName: productName,
     }).exec();
-    if (duplicateProduct)
-      return res.status(409).json({ message: "Product name already exists" });
-
-    if (
-      !productName ||
-      !typeProduct ||
-      !color ||
-      !description ||
-      !price ||
-      !size
-    ) {
-      return res.status(400).json({
-        message:
-          "productName, productImage, typeProduct, color, description, price and size are required",
-      });
+    if (duplicateProduct) {
+      const err = new Error("Product name already exists");
+      err.statusCode = 409;
+      return next(err);
     }
-    const formatColor = color.map((color) => {
-      return color.toLowerCase();
-    });
-    const formatSize = size.map((size) => {
-      return size.toUpperCase();
+
+    if (!productName || !typeProduct || !description || !price) {
+      const err = new Error(
+        "productName, productImage, typeProduct,  description, and price  are required"
+      );
+      err.statusCode = 400;
+      return next(err);
+    }
+    const variants = JSON.parse(variantsParse);
+    const variantsFormat = variants.map((variant) => {
+      if (!variant.color || !variant.size) {
+        const err = new Error("variants color and variants size are required");
+        err.statusCode = 400;
+        throw err;
+      }
+      if (variant.inStock < 0) {
+        const err = new Error(
+          "variants inStock must be greater than or equal to 0"
+        );
+        err.statusCode = 400;
+        throw err;
+      }
+      return variant;
     });
     if (req.file) {
       productImagePath = "/uploads/products/" + req.file.filename;
@@ -85,142 +226,204 @@ const createNewProduct = async (req, res) => {
       productImg: productImagePath,
       typeProduct,
       rating,
-      color: formatColor,
       description,
-      inStock,
       discount,
-      size: formatSize,
       price,
+      variants: variantsFormat,
     });
     const savedProduct = await newProduct.save();
     if (!savedProduct) {
-      return res.status(500).json({ message: "Failed to create new product" });
+      const err = new Error("Failed to create new product");
+      err.statusCode = 500;
+      return next(err);
     }
     res
       .status(200)
       .json({ message: "Created new product successfully", newProduct });
   } catch (err) {
-    console.error("Error creating new product: ", err);
-    res.status(500).json({ message: "Internal server error" });
+    next(err);
   }
 };
 
 // update product
-const updateProductById = async (req, res) => {
+const updateProductById = async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     let productImagePath;
-    if (!id)
-      return res.status(400).json({ message: "id parameter is required" });
+    if (!id || id === ":id") {
+      const err = new Error("id parameter is required");
+      err.statusCode = 400;
+      return next(err);
+    }
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      const err = new Error("Invalid product id format");
+      err.statusCode = 400;
+      return next(err);
+    }
+    const foundProduct = await Product.findById({ _id: id }).exec();
+    if (!foundProduct) {
+      const err = new Error("Not found product with id: " + id);
+      err.statusCode = 404;
+      return next(err);
+    }
     const {
       productName,
       typeProduct,
       rating,
-      color,
       description,
-      inStock,
       discount,
-      size,
       price,
+      variants: variantsParse,
     } = req.body;
-    const formatColor = color.map((color) => {
-      return color.toLowerCase();
-    });
-    const formatSize = size.map((size) => {
-      return size.toUpperCase();
-    });
     if (req.file) {
       productImagePath = "uploads/products/" + req.file.filename;
     }
-    const updatedProduct = await Product.findByIdAndUpdate(
-      {
-        _id: id,
-      },
-      {
-        $set: {
-          productName: productName || foundProduct.productName,
-          productImg: productImagePath || foundProduct.productImg,
-          typeProduct: typeProduct || foundProduct.typeProduct,
-          rating: rating || foundProduct.rating,
-          color: formatColor || foundProduct.color,
-          description: description || foundProduct.description,
-          inStock: inStock || foundProduct.inStock,
-          discount: discount || foundProduct.discount,
-          size: formatSize || foundProduct.size,
-          price: price || foundProduct.price,
-        },
+    const variants = JSON.parse(variantsParse);
+    const variantsFormat = variants.map((variant) => {
+      if (!variant.color || !variant.size) {
+        const err = new Error("variants color and variants size are required");
+        err.statusCode = 400;
+        throw err;
       }
-    );
+      if (variant.inStock < 0) {
+        const err = new Error(
+          "variants inStock must be greater than or equal to 0"
+        );
+        err.statusCode = 400;
+        throw err;
+      }
+      return variant;
+    });
+
+    // update field like this better than use set if we have some field in model that automatic change when save
+    if (productName) foundProduct.productName = productName;
+    if (productImagePath) foundProduct.productImg = productImagePath;
+    if (typeProduct) foundProduct.typeProduct = typeProduct;
+    if (rating !== undefined) foundProduct.rating = rating;
+    if (description) foundProduct.description = description;
+    if (discount !== undefined) foundProduct.discount = discount;
+    if (price !== undefined) foundProduct.price = price;
+    if (variantsFormat) foundProduct.variants = variantsFormat;
+
+    // Save (this triggers the pre-save hook that calculates inStock)
+    const updatedProduct = await foundProduct.save();
     if (!updatedProduct) {
-      return res
-        .status(404)
-        .json({ message: "Not found product with id: " + id });
+      const err = new Error("Not found product with id: " + id);
+      err.statusCode = 404;
+      return next(err);
     }
     res
       .status(200)
       .json({ message: "Updated product successfully", updatedProduct });
   } catch (err) {
-    console.error("Error updating product with od: ", id);
-    return res.status(500).json({ message: "Internal server error" });
+    next(err);
   }
 };
-
-// delete product
-const deleteProductById = async (req, res) => {
+// soft delete product
+const deleteProductById = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    if (!id) {
-      return res.status(400).json({ message: "id parameter is required" });
+    const { id } = req?.params;
+    const { userId } = req.body;
+
+    if (!id || id === ":id") {
+      const err = new Error("id parameter is required");
+      err.statusCode = 400;
+      return next(err);
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      const err = new Error("Invalid product id format");
+      err.statusCode = 400;
+      return next(err);
+    }
+    const idUserDeleteProduct = await User.findById(userId, { _id: 1 }).exec();
+    if (!idUserDeleteProduct) {
+      const err = new Error("User not found to delete product");
+      err.statusCode = 404;
+      return next(err);
+    }
+    const updateDeleteProduct = {
+      isDeleted: true,
+      deletedBy: idUserDeleteProduct._id,
+      deletedAt: new Date(),
+    };
+    const updatedDeleteProduct = await Product.findByIdAndUpdate(
+      { _id: id },
+      updateDeleteProduct,
+      { new: true }
+    ).exec();
+    if (!updatedDeleteProduct) {
+      const err = new Error("Not found product with id: " + id);
+      err.statusCode = 404;
+      return next(err);
+    }
+    res
+      .status(200)
+      .json({ message: `Product id ${id} is soft deleted successfully` });
+  } catch (err) {
+    next(err);
+  }
+};
+// hard delete product
+const hardDeleteProductById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id || id === ":id") {
+      const err = new Error("id parameter is required");
+      err.statusCode = 400;
+      return next(err);
     }
 
     const deletedProduct = await Product.findByIdAndDelete({ _id: id });
     if (!deletedProduct) {
-      return res
-        .status(404)
-        .json({ message: "Not found product with id: " + id });
+      const err = new Error("Not found product with id: " + id);
+      err.statusCode = 404;
+      return next(err);
     }
 
     res
       .status(200)
-      .json({ message: "Deleted product successfully", deletedProduct });
+      .json({ message: "Deleted(hard) product successfully", deletedProduct });
   } catch (err) {
-    console.error("Error deleting product by id:", err);
-    return res.status(500).json({ message: "Internal server error" });
+    next(err);
   }
 };
 
 // get product by types
 // earring, necklace, ring, bracelet
-const getProductByType = async (req, res) => {
+// const getProductByType = async (req, res, next) => {
+//   try {
+//     const { type } = req.params;
+//     if (!type || type === ":type") {
+//       const err = new Error("type parameter is required");
+//       err.statusCode = 400;
+//       return next(err);
+//     }
+//     const formatType = type.toLowerCase();
+//     const productFromType = await Product.find({ typeProduct: formatType });
+//     if (!productFromType || productFromType.length === 0) {
+//       const err = new Error("No products found for type: " + type);
+//       err.statusCode = 404;
+//       return next(err);
+//     }
+//     return res.status(200).json(productFromType);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
+const getNewestProduct = async (req, res, next) => {
   try {
-    const type = req.params.type;
-    if (!type) {
-      return res.status(400).json({ message: "type product is required" });
-    }
-    const formatType = type.toLowerCase();
-    const productFromType = await Product.find({ typeProduct: formatType });
-    if (!productFromType || productFromType.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No products found for type: " + type });
-    }
-    return res.status(200).json(productFromType);
-  } catch (err) {
-    console.error("Error get product by type:", err);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-const getNewestProduct = async (req, res) => {
-  try {
-    const limit = parseInt(req.query.limit);
-    if (!limit) {
+    const { limit } = req.query;
+    const limitNum = parseInt(limit);
+    if (!limitNum) {
       // query all products
       const newestProduct = await Product.find({})
         .sort({ createdAt: -1 })
         .exec();
       if (!newestProduct || newestProduct.length === 0) {
-        return res.status(404).json({ message: "No products found" });
+        const err = new Error("No products found");
+        err.statusCode = 404;
+        return next(err);
       }
 
       return res
@@ -230,31 +433,35 @@ const getNewestProduct = async (req, res) => {
       // query from limit
       const newestProduct = await Product.find({})
         .sort({ createdAt: -1 })
-        .limit(parseInt(limit))
+        .limit(limitNum)
         .exec();
 
       if (!newestProduct || newestProduct.length === 0) {
-        return res.status(404).json({ message: "No products found" });
+        const err = new Error("No products found");
+        err.statusCode = 404;
+        return next(err);
       }
 
       return res.status(200).json({ limit, data: newestProduct });
     }
   } catch (err) {
-    console.error("Error get newest product:", err);
-    return res.status(500).json({ message: "Internal server error" });
+    next(err);
   }
 };
-const getTopProduct = async (req, res) => {
+const getTopProduct = async (req, res, next) => {
   try {
-    const limit = parseInt(req.query.limit);
-    if (!limit) {
+    const { limit } = req.query;
+    const limitNum = parseInt(limit);
+    if (!limitNum) {
       // query all products
       const topProduct = await Product.find({})
-        .sort({ sellingAmount: -1 })
+        .sort({ sellingAmountTotal: -1 })
         .exec();
 
       if (!topProduct || topProduct.length === 0) {
-        return res.status(404).json({ message: "No products found" });
+        const err = new Error("No products found");
+        err.statusCode = 404;
+        return next(err);
       }
 
       return res
@@ -264,28 +471,32 @@ const getTopProduct = async (req, res) => {
       // query from limit
       const topProduct = await Product.find({})
         .sort({ sellingAMount: -1 })
-        .limit(parseInt(limit))
+        .limit(limitNum)
         .exec();
 
       if (!topProduct || topProduct.length === 0) {
-        return res.status(404).json({ message: "No products found" });
+        const err = new Error("No products found");
+        err.statusCode = 404;
+        return next(err);
       }
 
       return res.status(200).json(topProduct);
     }
   } catch (err) {
-    console.error("Error get top product:", err);
-    return res.status(500).json({ message: "Internal server error" });
+    next(err);
   }
 };
 
-const getTopRatingProduct = async (req, res) => {
+const getTopRatingProduct = async (req, res, next) => {
   try {
-    const limit = parseInt(req.query.limit);
-    if (!limit) {
+    const { limit } = req.query;
+    const limitNum = parseInt(limit);
+    if (!limitNum) {
       const ratingProduct = await Product.find({}).sort({ rating: -1 }).exec();
       if (!ratingProduct || ratingProduct.length === 0) {
-        return res.status(404).json({ message: "No products found" });
+        const err = new Error("No products found");
+        err.statusCode = 404;
+        return next(err);
       }
       return res
         .status(200)
@@ -293,34 +504,37 @@ const getTopRatingProduct = async (req, res) => {
     } else {
       const ratingProduct = await Product.find({})
         .sort({ rating: -1 })
-        .limit(parseInt(limit))
+        .limit(limitNum)
         .exec();
       if (!ratingProduct || ratingProduct.length === 0) {
-        return res.status(404).json({ message: "No products found" });
+        const err = new Error("No products found");
+        err.statusCode = 404;
+        return next(err);
       }
       return res.status(200).json({ limit, data: ratingProduct });
     }
   } catch (err) {
-    return res.status(500).json({ message: "Internal server error" });
+    next(err);
   }
 };
-const updateProductImageById = async (req, res) => {
+const updateProductImageById = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    if (!id) {
-      return res.status(400).json({ message: "id parameter is required" });
+    const { id } = req.params;
+    if (!id || id === ":id") {
+      const err = new Error("id parameter is required");
+      err.statusCode = 400;
+      return next(err);
     }
-    const productById = await Product.findById(
-      { _id: id },
-      { productName: 1, productImg: 1 }
-    ).exec();
+    const productById = await Product.findById(id).exec();
     if (!productById) {
-      return res
-        .status(404)
-        .json({ message: "No product found with id: " + id });
+      const err = new Error("No product found with id: " + id);
+      err.statusCode = 404;
+      return next(err);
     }
     if (!req.file) {
-      return res.status(400).json({ message: "productImg file is required" });
+      const err = new Error("productImg file is required");
+      err.statusCode = 400;
+      return next(err);
     }
     const oldImagePath = path.join(
       __dirname,
@@ -344,8 +558,7 @@ const updateProductImageById = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error updating product image by id:", err);
-    return res.status(500).json({ message: "Internal server error" });
+    next(err);
   }
 };
 module.exports = {
@@ -354,9 +567,10 @@ module.exports = {
   createNewProduct,
   updateProductById,
   deleteProductById,
-  getProductByType,
+  // getProductByType,
   getNewestProduct,
   getTopProduct,
   getTopRatingProduct,
   updateProductImageById,
+  hardDeleteProductById,
 };

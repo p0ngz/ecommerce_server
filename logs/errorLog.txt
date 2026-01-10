@@ -1,7 +1,0 @@
-2025-11-26	03:03:53	3e151ce5-557b-4d97-9f46-64801928524d	TypeError: Cannot destructure property 'username' of 'req.body' as it is undefined.
-2025-11-27	04:49:03	f543de00-465f-45fb-8d9c-d4a3cee29e6b	PayloadTooLargeError: request entity too large
-2025-11-27	06:12:55	f6c77d1f-6761-419e-9ae5-dbcc5c5abdea	ReferenceError: userImage is not defined
-2025-11-27	06:15:55	85f4bcd1-0785-4b2c-95f9-aa3486acf40e	Error: ENOENT: no such file or directory, open 'C:\Users\Windows 10\Desktop\Programming\Backend\expressJs\express_me\public\uploads\user\1764198955840_xhn6lxdne.jpg}'
-2025-11-27	06:19:17	b8a7b114-29c5-420c-b8c8-309bcb6a9550	Error: ENOENT: no such file or directory, open 'C:\Users\Windows 10\Desktop\Programming\Backend\expressJs\express_me\public\uploads\user\1764199157015_hlaef9iwf.jpg'
-2025-11-27	06:31:44	3ef4ddb6-e8b9-47bd-9ffe-f2b7eadb5ea0	ValidationError: User validation failed: information.birthDate: Cast to date failed for value "17-05-1996" (type string) at path "information.birthDate", information.gender: `male` is not a valid enum value for path `information.gender`.
-2025-11-27	06:32:35	470c74e2-b99b-4c48-8eab-88e2763ea15b	ValidationError: User validation failed: information.birthDate: Cast to date failed for value "17-05-1996" (type string) at path "information.birthDate"
