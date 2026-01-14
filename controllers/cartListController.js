@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const getAllCartLists = async (req, res, next) => {
   try {
     const { from, to, page, limit, sort } = req.query;
-    console.log(typeof from, typeof to);
     let query = {};
     if (from || to) {
       query.createdAt = {};
@@ -106,7 +105,6 @@ const getCartListByUserId = async (req, res, next) => {
     }
 
     const cartList = await CartList.aggregate([
-      // 1️⃣ เลือก cart ของ user คนนี้
       {
         $match: {
           userID: new mongoose.Types.ObjectId(userId),
@@ -334,9 +332,6 @@ const updateCartListByCartListId = async (req, res, next) => {
         : null;
       totalNum = total;
     }
-    console.log(quantity, quantityNum);
-    console.log(total, totalNum);
-    console.log("---------------------------");
     const updatedCartList = await CartList.findByIdAndUpdate(
       id,
       {
@@ -347,7 +342,6 @@ const updateCartListByCartListId = async (req, res, next) => {
       },
       { new: true }
     ).exec();
-    console.log("updatedCartList: ", updatedCartList);
     if (!updatedCartList) {
       const err = new Error("CartList not found with id: " + id);
       err.statusCode = 404;
