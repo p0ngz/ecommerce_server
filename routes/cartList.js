@@ -14,7 +14,8 @@ router
   .post(cartListController.createOrUpdateCartListByUserId)
   .delete(cartListController.deleteCartListByUserId);
 
-// router
-//   .route("/cartList/:id")
-//   .delete(cartListController.deleteCartListByCartListId);
+router
+  .route("/cart-list/:id")
+  .put(cartListController.updateCartListByCartListId)
+  .delete(cartListController.deleteCartListByCartListId);
 module.exports = router;
