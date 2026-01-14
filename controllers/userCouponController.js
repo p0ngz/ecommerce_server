@@ -35,14 +35,15 @@ const getAllUserCoupons = async (req, res, next) => {
     }
 
     if (usedFrom || usedTo) {
-      query.usedAt = {};
+      query.used = {};
       if (usedFrom)
-        query.usedAt.$gte = usedFrom
+        query.used.usedAt.$gte = usedFrom
           ? new Date(usedFrom)
           : new Date("2025-11-25");
-      if (usedTo) query.usedAt.$lte = usedTo ? new Date(usedTo) : new Date();
+      if (usedTo)
+        query.used.usedAt.$lte = usedTo ? new Date(usedTo) : new Date();
     }
-
+    // CPN-FREESHIP15
     const pageRaw = typeof page === "string" ? page.trim() : page;
     const limitRaw = typeof limit === "string" ? limit.trim() : limit;
     const pageParsed = parseInt(pageRaw);
@@ -119,7 +120,6 @@ const getUserCouponByUserCouponId = async (req, res, next) => {
 const getUserCouponByUserId = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { populate } = req.query; // "true"/"all", "false", "coupon", "order"
 
     if (!id || id === ":id") {
       const error = new Error("user id is required");
@@ -132,31 +132,58 @@ const getUserCouponByUserId = async (req, res, next) => {
       return next(error);
     }
 
-    // Build query
-    let query = UserCoupon.find({ userID: id });
+    const userCouponByUserId = await UserCoupon.aggregate([
+      { $match: { userID: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userID",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $lookup: {
+          from: "coupons",
+          localField: "couponID",
+          foreignField: "_id",
+          as: "couponDetails",
+        },
+      },
+      {
+        $unwind: "$couponDetails",
+      },
+      {
+        $group: {
+          _id: "$user._id",
+          userDetails: {
+            $first: {
+              _id: "$user._id",
+              username: "$user.username",
+              email: "$user.email",
+            },
+          },
+          coupons: {
+            $push: {
+              _id: "$_id",
+              coupon: "$couponDetails",
+              status: "$status",
+              claimedAt: "$claimedAt",
+              usageCount: "$usageCount",
+              userUsageLimit: "$userUsageLimit",
+              used: "$used",
+              orderID: "$orderID",
+              createdAt: "$createdAt",
+            },
+          },
+        },
+      },
+    ]);
 
-    // Handle population based on query param
-    if (populate === "true" || populate === "all") {
-      // Populate all related fields with selected data
-      query = query
-        .populate(
-          "userID",
-          "username email information.firstName information.lastName"
-        )
-        .populate(
-          "couponID"
-          // "couponID couponName code discountType discountValue validFrom validUntil isActive"
-        )
-        .populate("orderID", "orderID totalAmount orderStatus");
-    } else if (populate === "coupon") {
-      query = query.populate("couponID");
-    } else if (populate === "order") {
-      query = query.populate("orderID");
-    }
-
-    const foundUserCouponByUserId = await query.lean().exec();
-
-    if (!foundUserCouponByUserId || foundUserCouponByUserId.length === 0) {
+    if (!userCouponByUserId || userCouponByUserId.length === 0) {
       const err = new Error("No userCoupons found for this user ID");
       err.statusCode = 404;
       return next(err);
@@ -164,8 +191,7 @@ const getUserCouponByUserId = async (req, res, next) => {
 
     res.status(200).json({
       message: "Get user coupons by user ID successfully",
-      count: foundUserCouponByUserId.length,
-      userCoupons: foundUserCouponByUserId,
+      userCouponByUserId,
     });
   } catch (err) {
     next(err);
@@ -224,9 +250,30 @@ const createMapCouponWithUser = async (req, res, next) => {
       return next(error);
     }
 
+    // Find the coupon to get its usageLimit and update distributionCount
+    const foundCoupon = await Coupon.findById(couponID).exec();
+    if (!foundCoupon) {
+      const err = new Error("Coupon not found");
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    // Check if this user-coupon mapping already exists
+    const existingMapping = await UserCoupon.findOne({
+      userID,
+      couponID,
+    }).exec();
+
+    if (existingMapping) {
+      const err = new Error("User already has this coupon");
+      err.statusCode = 400;
+      return next(err);
+    }
+
     const createMapCouponWithUser = new UserCoupon({
       userID,
       couponID,
+      userUsageLimit: foundCoupon.usageLimitPerUser,
     });
 
     const savedCouponWithUser = await createMapCouponWithUser.save();
@@ -236,13 +283,7 @@ const createMapCouponWithUser = async (req, res, next) => {
       err.statusCode = 500;
       return next(err);
     }
-    // update distributedCount in Coupon model
-    const foundCoupon = await Coupon.findById(couponID).exec();
-    if (!foundCoupon) {
-      const err = new Error("Coupon not found to update distributedCount");
-      err.statusCode = 404;
-      return next(err);
-    }
+    // update coupon
     foundCoupon.distributionCount = foundCoupon.distributionCount + 1;
 
     await foundCoupon.save();
@@ -259,6 +300,7 @@ const updateUserCouponByUserIdAndCouponId = async (req, res, next) => {
   try {
     // when do we update => use coupon(status, usedAt, orderID)
     const { id, userId } = req.params;
+    const { orderID } = req.body;
     if (!id || id === ":id") {
       const error = new Error("userCoupon id is required");
       error.statusCode = 400;
@@ -279,7 +321,16 @@ const updateUserCouponByUserIdAndCouponId = async (req, res, next) => {
       error.statusCode = 400;
       return next(error);
     }
-
+    if (!orderID) {
+      const error = new Error("orderID is required to update userCoupon");
+      error.statusCode = 400;
+      return next(error);
+    }
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      const error = new Error("Invalid order ID format");
+      error.statusCode = 400;
+      return next(error);
+    }
     const foundUserCoupon = await UserCoupon.findOne({
       $and: [{ userID: userId }, { couponID: id }],
     }).exec();
@@ -296,13 +347,37 @@ const updateUserCouponByUserIdAndCouponId = async (req, res, next) => {
       return next(err);
     }
 
-    // update in UserCoupon collection => status, usedAt
-    foundUserCoupon.status = "used";
-    foundUserCoupon.usedAt = new Date();
+    // Check if user has reached their usage limit for this coupon
+    const effectiveLimit =
+      foundUserCoupon.userUsageLimit || foundCoupon.usageLimit;
+    if (foundUserCoupon.usageCount >= effectiveLimit) {
+      const err = new Error("User has reached the usage limit for this coupon");
+      err.statusCode = 400;
+      return next(err);
+    }
 
-    // update in Coupon collection => usageCount, isActive
+    // Check if coupon has reached global usage limit
+    if (foundCoupon.usageCount >= foundCoupon.usageLimit) {
+      const err = new Error("Coupon has reached its global usage limit");
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    // Update in UserCoupon collection => status, usedAt, usageCount
+    foundUserCoupon.usageCount += 1;
+    foundUserCoupon.used = {
+      usedAt: new Date(),
+      orderID: orderID,
+    };
+
+    // Only mark as "used" if user has reached their limit
+    if (foundUserCoupon.usageCount >= effectiveLimit) {
+      foundUserCoupon.status = "used";
+    }
+
+    // Update in Coupon collection => usageCount, isActive
     foundCoupon.usageCount += 1;
-    if (foundCoupon.usageCount === foundCoupon.usageLimit) {
+    if (foundCoupon.usageCount >= foundCoupon.usageLimit) {
       foundCoupon.isActive = false;
     }
 
@@ -318,6 +393,8 @@ const updateUserCouponByUserIdAndCouponId = async (req, res, next) => {
     next(err);
   }
 };
+// CPN-WELCOME10
+// CPN-HOLIDAY1515
 
 const softDeleteUserCouponByUserCouponId = async (req, res, next) => {
   try {

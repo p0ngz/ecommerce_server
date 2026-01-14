@@ -20,18 +20,38 @@ const userCouponSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  usedAt: {
-    type: Date,
+  // usedAt
+  used: [
+    {
+      usedAt: {
+        type: Date,
+        default: null,
+      },
+      orderID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order",
+        require: true,
+        default: null,
+      },
+    },
+  ],
+  usageCount: {
+    // how many times this user has used this specific coupon
+    type: Number,
+    default: 0,
+  },
+  userUsageLimit: {
+    // max times this user can use this coupon (null means use coupon's global limit)
+    type: Number,
     default: null,
   },
-
   isDeleted: { type: Boolean, default: false },
   deletedAt: {
     type: Date,
     default: null,
   },
 });
-
+                    
 // virtual field is field that is not stored in MongoDB, but is calculated on the fly
 userCouponSchema.virtual("isExpired").get(function () {
   if (this.couponID && this.couponID.validUntil) {

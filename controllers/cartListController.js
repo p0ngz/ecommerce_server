@@ -105,6 +105,57 @@ const getCartListByUserId = async (req, res, next) => {
       return next(err);
     }
 
+    const cartList = await CartList.aggregate([
+      // 1️⃣ เลือก cart ของ user คนนี้
+      {
+        $match: {
+          userID: new mongoose.Types.ObjectId(userId),
+        },
+      },
+
+      {
+        $lookup: {
+          from: "users",
+          localField: "userID",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+
+      {
+        $lookup: {
+          from: "products",
+          localField: "productId",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      { $unwind: "$product" },
+      {
+        $group: {
+          _id: "$user._id",
+          userID: {
+            $first: {
+              _id: "$user._id",
+              username: "$user.username",
+              email: "$user.email",
+            },
+          },
+          cartLists: {
+            $push: {
+              _id: "$_id",
+              product: "$product",
+              quantity: "$quantity",
+              size: "$size",
+              color: "$color",
+              total: "$total",
+              createdAt: "$createdAt",
+            },
+          },
+        },
+      },
+    ]);
     const foundCartListByUserId = await CartList.find({
       userID: userId,
     })
@@ -115,14 +166,13 @@ const getCartListByUserId = async (req, res, next) => {
       })
       .populate("productId")
       .exec();
-
     if (!foundCartListByUserId || foundCartListByUserId.length === 0) {
       const err = new Error("CartList for this user not found");
       err.statusCode = 404;
       return next(err);
     }
 
-    res.status(200).json(foundCartListByUserId);
+    res.status(200).json(cartList);
   } catch (err) {
     next(err);
   }
@@ -143,7 +193,7 @@ const createOrUpdateCartListByUserId = async (req, res, next) => {
       return next(err);
     }
 
-    const { productId, quantity, size, color, total } = req.body;
+    const { productId, color, size, quantity, total } = req.body;
     if (!productId || !quantity || !size || !color) {
       const err = new Error("productId, quantity, size and color are required");
       err.statusCode = 400;
@@ -195,7 +245,6 @@ const createOrUpdateCartListByUserId = async (req, res, next) => {
         foundProductById.price *
         (1 - foundProductById.discount / 100);
     if (totalNum < 0) {
-      console.log(totalNum);
       const err = new Error("total must be a positive number in detail");
       err.statusCode = 400;
       return next(err);
@@ -236,18 +285,82 @@ const createOrUpdateCartListByUserId = async (req, res, next) => {
   }
 };
 
-// const updateCartListByCartListId = async (req, res, next) => {
-//   try {
-//     const { id } = req.params;
-//     if (!id || id === ":id") {
-//       const err = new Error("CartList id is required");
-//       err.statusCode = 400;
-//       return next(err);
-//     }
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+const updateCartListByCartListId = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id || id === ":id") {
+      const err = new Error("CartList id is required");
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    const { quantity, total } = req.body;
+
+    if (!quantity && !total) {
+      const err = new Error(
+        "At least one of quantity or total is required to update"
+      );
+      err.statusCode = 400;
+      return next(err);
+    }
+    const quantityNum = Number(quantity);
+    if (quantity && (!quantityNum || quantityNum <= 0)) {
+      const err = new Error("quantity must be a positive number");
+      err.statusCode = 400;
+      return next(err);
+    }
+    let totalNum;
+    if (!total) {
+      const productId = await CartList.findById(id).select("productId").exec();
+      if (!productId) {
+        const err = new Error("CartList not found with id: " + id);
+        err.statusCode = 404;
+        return next(err);
+      }
+
+      const productPrice = await Product.findById(productId.productId)
+        .select("price discount")
+        .exec();
+      if (!productPrice) {
+        const err = new Error(
+          "Product not found with id: " + productId.productId
+        );
+        err.statusCode = 404;
+        return next(err);
+      }
+
+      const total = quantityNum
+        ? quantityNum * productPrice.price * (1 - productPrice.discount / 100)
+        : null;
+      totalNum = total;
+    }
+    console.log(quantity, quantityNum);
+    console.log(total, totalNum);
+    console.log("---------------------------");
+    const updatedCartList = await CartList.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          quantity: quantityNum,
+          total: totalNum,
+        },
+      },
+      { new: true }
+    ).exec();
+    console.log("updatedCartList: ", updatedCartList);
+    if (!updatedCartList) {
+      const err = new Error("CartList not found with id: " + id);
+      err.statusCode = 404;
+      return next(err);
+    }
+    res.status(200).json({
+      message: "CartList updated successfully",
+      cartList: updatedCartList,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 const deleteCartListByCartListId = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -264,12 +377,10 @@ const deleteCartListByCartListId = async (req, res, next) => {
       err.statusCode = 404;
       return next(err);
     }
-    res
-      .status(200)
-      .json({
-        message: "CartList deleted successfully",
-        deletedCartList: foundAndDeletedCartList,
-      });
+    res.status(200).json({
+      message: "CartList deleted successfully",
+      deletedCartList: foundAndDeletedCartList,
+    });
   } catch (err) {
     next(err);
   }
@@ -310,7 +421,7 @@ module.exports = {
   getCartListByICartListId,
   getCartListByUserId,
   createOrUpdateCartListByUserId,
-  // updateCartListByCartListId,
+  updateCartListByCartListId,
   deleteCartListByCartListId,
   deleteCartListByUserId,
 };

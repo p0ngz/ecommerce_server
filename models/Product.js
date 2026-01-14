@@ -15,7 +15,14 @@ const productSchema = new mongoose.Schema({
   },
   typeProduct: {
     type: String,
-    enum: ["earring", "necklace", "ring", "bracelet", "gold jewels", "pendants"],
+    enum: [
+      "earring",
+      "necklace",
+      "ring",
+      "bracelet",
+      "gold jewels",
+      "pendants",
+    ],
     required: [true, "typeProduct is required"],
   },
   rating: {
@@ -122,6 +129,50 @@ productSchema.pre("save", async function (next) {
   }
   next();
 });
+
+// check stock handler
+productSchema.statics.checkStock = async function (
+  productId,
+  color,
+  size,
+  quantity
+) {
+  const product = await this.findById(productId);
+  if (!product) {
+    throw new Error(`Product id ${productId} not found`);
+  }
+  const variant = product.variants.find(
+    (variant) => variant.color === color && variant.size === size
+  );
+  if (!variant) {
+    throw new Error(`Variant ${color}/${size} not found`);
+  }
+  return variant && variant.inStock >= quantity;
+};
+// update Stock and sellingAmount product
+productSchema.statics.updateProductStock = async function (
+  productId,
+  color,
+  size,
+  quantity
+) {
+  const product = await this.findById(productId);
+  if (!product) {
+    throw new Error(`Product id ${productId} not found`);
+  }
+
+  const variant = product.variants.find(
+    (variant) => variant.color === color && variant.size === size
+  );
+  if (!variant) {
+    throw new Error(`Variant ${color}/${size} not found`);
+  }
+  variant.inStock -= quantity;
+  variant.sellingAmount += quantity;
+  await product.save();
+
+  return product;
+};
 
 const Product = mongoose.model("Product", productSchema);
 

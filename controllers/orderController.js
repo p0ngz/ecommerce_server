@@ -140,6 +140,7 @@ const createOrder = async (req, res, next) => {
     const {
       userID,
       totalItem,
+      paymentMethod,
       detail,
       deliverAddress,
       subTotal,
@@ -149,9 +150,9 @@ const createOrder = async (req, res, next) => {
       totalPrice,
       coupon,
     } = req.body;
-    if (!userID || !totalItem || !detail || !deliverAddress) {
+    if (!userID || !totalItem || !paymentMethod || !detail || !deliverAddress) {
       const err = new Error(
-        "userID, totalItem, detail and deliverAddress are required"
+        "userID, totalItem, paymentMethod, detail and deliverAddress are required"
       );
       err.statusCode = 400;
       return next(err);
@@ -172,6 +173,7 @@ const createOrder = async (req, res, next) => {
         if (!item.product || !mongoose.Types.ObjectId.isValid(item.product)) {
           throw new Error(`detail[${idx}].product must be a valid ObjectId`);
         }
+        console.log("item: ", item);
         const quantity = Number(item.quantity);
         const size = String(item.size.toUpperCase());
         const color = String(item.color);
@@ -183,14 +185,15 @@ const createOrder = async (req, res, next) => {
         if (!product) {
           throw new Error(`detail[${idx}].product not found in database`);
         }
-
-        const unitPrice = product.price;
-        const discountProduct = product.discount || 0;
-
-        // Calculate price before discount (unitPrice * quantity)
-        const priceBeforeDiscount = Number((unitPrice * quantity).toFixed(2));
+        // check inStock
+        await Product.checkStock(item.product, color, size, quantity);
 
         // Calculate total price after discount applied
+        const unitPrice = product.price;
+        const discountProduct = product?.discount || 0;
+        const priceBeforeDiscount = Number((unitPrice * quantity).toFixed(2));
+        // check inStock with productID color size and quantity if out of stock return error => createOrder decrease stock
+
         const totalPrice = Number(
           (unitPrice * (1 - discountProduct / 100) * quantity).toFixed(2)
         );
@@ -213,7 +216,20 @@ const createOrder = async (req, res, next) => {
       })
     );
     const totalItemNum = Number(totalItem);
-    const deliverAddressStr = String(deliverAddress);
+    if (deliverAddress) {
+      if (
+        !deliverAddress.address ||
+        !deliverAddress.zipCode ||
+        !deliverAddress.tel ||
+        !deliverAddress.email
+      ) {
+        const err = new Error(
+          "deliverAddress.address, deliverAddress.zipCode, deliverAddress.tel and deliverAddress.email are required"
+        );
+        err.statusCode = 400;
+        return next(err);
+      }
+    }
 
     // subTotal should be sum of all totalPrice (after product discounts applied)
     const subTotalNum = subTotal
@@ -264,50 +280,13 @@ const createOrder = async (req, res, next) => {
       }
     }
 
-    let couponId;
-    if (coupon) {
-      if (!mongoose.Types.ObjectId.isValid(coupon)) {
-        const err = new Error("Invalid coupon format");
-        err.statusCode = 400;
-        return next(err);
-      }
-      couponId = coupon;
-
-      // update Coupon, UserCoupon when create order with coupon
-      // this way better than update it from field like  foundCoupon.usageLimit = foundCoupon.usageLimit -1
-      // const foundCoupon = await Coupon.findByIdAndUpdate(
-      //   { _id: couponId },
-      //   { $inc: { usageCount: 1, usageLimit: -1 } }, //$inc increment
-      //   { new: true } // new true return document value after update
-      // ).exec();
-      // update Coupon
-      const foundCoupon = await Coupon.findById({ _id: couponId }).exec();
-      foundCoupon.usageLimit = foundCoupon.usageLimit - 1;
-      foundCoupon.usageCount = foundCoupon.usageCount + 1;
-      if (foundCoupon.usageLimit <= 0) {
-        foundCoupon.isActive = false;
-      }
-      await foundCoupon.save();
-
-      // update UserCoupon
-      const foundUserCoupon = await UserCoupon.find({
-        userID,
-        couponID: couponId,
-      }).exec();
-
-      if (foundUserCoupon && foundUserCoupon.length > 0) {
-        for (const uc of foundUserCoupon) {
-          uc.status = "used";
-          uc.usedAt = new Date();
-          await uc.save();
-        }
-      }
-    }
+    console.log("detailFormat:", detailFormat);
+    console.log("deliverAddress:", deliverAddress);
     const newOrder = new Order({
       userID,
       totalItem: totalItemNum,
       detail: detailFormat,
-      deliverAddress: deliverAddressStr,
+      deliverAddress,
       subTotal: subTotalNum,
       shippingPrice: shippingPriceNum,
       taxPrice: taxPriceNum,
@@ -325,7 +304,7 @@ const createOrder = async (req, res, next) => {
       return next(err);
     }
 
-    // update product quantity when have order
+    // update product
     for (const item of detailFormat) {
       await Product.findOneAndUpdate(
         { _id: item.product },
@@ -340,6 +319,42 @@ const createOrder = async (req, res, next) => {
         }
       );
     }
+    // update coupon
+    let couponId;
+    if (coupon) {
+      if (!mongoose.Types.ObjectId.isValid(coupon)) {
+        const err = new Error("Invalid coupon format");
+        err.statusCode = 400;
+        return next(err);
+      }
+      couponId = coupon;
+
+      const foundCoupon = await Coupon.findById({ _id: couponId }).exec();
+      foundCoupon.usageCount = foundCoupon.usageCount + 1;
+      if (foundCoupon.usageLimit <= foundCoupon.usageCount) {
+        foundCoupon.isActive = false;
+      }
+      await foundCoupon.save();
+
+      // update UserCoupon
+      const foundUserCoupon = await UserCoupon.find({
+        userID,
+        couponID: couponId,
+      }).exec();
+
+      if (foundUserCoupon) {
+        foundUserCoupon.usageCount += 1; // update usageCount
+        foundUserCoupon.status =
+          foundUserCoupon.usageCount >= foundUserCoupon.userUsageLimit
+            ? "used"
+            : foundUserCoupon.status; // update status
+        foundUserCoupon.used = [
+          ...foundUserCoupon.used,
+          { usedAt: new Date(), orderID: savedOrder._id },
+        ];
+      }
+    }
+
     res.status(201).json({
       message: "Created order successfully",
       order: savedOrder,

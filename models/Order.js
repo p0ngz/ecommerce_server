@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { User } = require("./User.js");
 const { nanoid } = require("nanoid");
 const { generateID } = require("../utils/generateID.js");
 
@@ -10,6 +11,19 @@ const orderSchema = new mongoose.Schema({
     unique: true,
   },
   totalItem: { type: Number, required: true, min: 1 },
+  paymentMethod: {
+    type: String,
+    enum: ["credit card", "paypal", "bank transfer", "cash"],
+    required: true,
+    set: function (value) {
+      const allowed = ["credit card", "paypal", "bank transfer", "cash"];
+      if (!allowed.includes(value)) {
+        throw new Error("Invalid payment method");
+      }
+      return value;
+    },
+    default: "cash",
+  },
   detail: [
     // in mongoose always generate _id for subDocument array
     {
@@ -18,22 +32,53 @@ const orderSchema = new mongoose.Schema({
         ref: "Product",
         required: true,
       },
-      quantity: { type: Number, required: true, min: 1 },
+      color: {
+        type: String,
+        required: [true, "color when chosen product is required"],
+      },
       size: {
         type: String,
         enum: ["S", "M", "L", "XL"],
         required: [true, "size when chosen product is required"],
       },
-      color: {
-        type: String,
-        required: [true, "color when chosen product is required"],
-      },
+      quantity: { type: Number, required: true, min: 1 },
       discountProduct: { type: Number, default: 0, min: 0, max: 100 }, // discount of product at the time of order
       price: { type: Number, required: true, min: 0 }, //price * quantity
       totalPrice: { type: Number, required: true, min: 0 }, // price after discountProduct applied
     },
   ],
-  deliverAddress: { type: String, required: true },
+  deliverAddress: {
+    address: {
+      type: String,
+      required: true,
+    },
+    zipCode: {
+      type: String,
+      required: true,
+    },
+    tel: {
+      type: String,
+      required: true,
+      default: async function () {
+        const userTel = await User.findById(this.userID)
+          .select("information.phone")
+          .lean();
+        console.log("userTel:", userTel);
+        return userTel;
+      },
+    },
+    email: {
+      type: String,
+      required: true,
+      default: async function () {
+        const userEmail = await User.findById(this.userID)
+          .select("email")
+          .lean();
+        console.log("userEmail:", userEmail);
+        return userEmail;
+      },
+    },
+  },
   status: {
     pass: {
       type: [String],

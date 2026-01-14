@@ -46,26 +46,30 @@ const couponSchema = new mongoose.Schema({
     default: Infinity,
   },
   distributionLimit: {
-    // maximum number of users who can receive this coupon
     type: Number,
     default: null, // null means unlimited distribution
   },
   distributionCount: {
-    // how many users have received/claimed this coupon
     type: Number,
     default: 0,
   },
-  usageLimit: {
-    // maximum times this coupon can be used (applied at checkout)
+  usageLimitPerUser: {
     type: Number,
     default: 1,
   },
+  usageLimit: {
+    //constant
+    type: Number,
+    default: function () {
+      return this.distributionLimit * this.usageLimitPerUser;
+    },
+  },
   usageCount: {
+    // update
     // how many times the coupon has been actually used
     type: Number,
     default: 0,
   },
-
   validFrom: {
     // can start use coupon
     type: Date,
@@ -78,7 +82,17 @@ const couponSchema = new mongoose.Schema({
   },
   isActive: {
     type: Boolean,
-    default: true,
+    default: function () {
+      const curDate = new Date();
+      if (
+        this.validUntil >= curDate &&
+        this.validFrom <= curDate &&
+        this.usageLimit > this.usageCount
+      ) {
+        return true;
+      }
+      return false;
+    },
   },
   createdBy: {
     userId: {
