@@ -63,7 +63,6 @@ userCouponSchema.virtual("isExpired").get(function () {
 // method is instance method function for each document => ex. userCoupon.methodName
 userCouponSchema.methods.checkAndUpdateExpiry = async function () {
   if (this.status !== "used" && this.couponID) {
-    // Populate if not already populated
     if (!this.couponID.validUntil) {
       await this.populate("couponID");
     }
