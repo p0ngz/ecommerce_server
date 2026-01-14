@@ -91,7 +91,7 @@ const getUSerById = async (req, res, next) => {
       return next(err);
     }
     if (!foundUser) {
-      const err = new Error("No User found with id: " + userId);
+      const err = new Error("No User found with id: " + id);
       err.statusCode = 404;
       return next(err);
     }
@@ -171,7 +171,7 @@ const updateUser = async (req, res, next) => {
       return next(err);
     }
 
-    const { username, email, password, information } = req.body;
+    const { username, email, password, information } = req?.body;
     // handle form-data
     let newInformation = {};
     if (information) {
