@@ -9,10 +9,10 @@ const getAllOrders = async (req, res, next) => {
   try {
     const {
       userID,
-      status, // filter by any current status value
+      currentStatus, // filter by currentStatus
       cancel, // true/false
-      productID, // any detail.productID in order
-      search, // regex on detail.productName
+      productID, // any detail.product in order
+      search, // regex on detail.productName (if you add this field)
       minTotal, // totalPrice >=
       maxTotal, // totalPrice <=
       from = new Date("2025-11-26"), // createdAt from (ISO date)
@@ -21,42 +21,39 @@ const getAllOrders = async (req, res, next) => {
       limit = 10,
       sort = "-createdAt", // default newest first
     } = req.query;
-    // so careful for when we request in postman type of value is string when we want to use this to filter
-    // we need to convert type of it correctly
+
     const query = {}; // filter
 
     if (userID) {
       query.userID = userID;
     }
-    if (status) {
-      if (status.pass) {
-        query["status.pass"] = {
-          $in: Array.isArray(status.pass) ? status.pass : [status.pass],
-        };
-      }
-      if (status.current) {
-        query["status.current"] = {
-          $in: Array.isArray(status.current)
-            ? status.current
-            : [status.current],
-        };
-      }
+
+    // Filter by currentStatus instead of old status.pass/current
+    if (currentStatus) {
+      query["status.currentStatus"] = {
+        $in: Array.isArray(currentStatus) ? currentStatus : [currentStatus],
+      };
     }
+
     if (typeof cancel !== "undefined") {
       if (cancel === "true" || cancel === true) query.cancel = true;
       else if (cancel === "false" || cancel === false) query.cancel = false;
     }
+
     if (productID) {
-      query["detail.productID"] = productID;
+      query["detail.product"] = productID;
     }
+
     if (search) {
-      query["detail.productName"] = { $regex: search, $options: "i" }; // search in productName field ignore lowercase or lowercase
+      query["detail.productName"] = { $regex: search, $options: "i" };
     }
+
     if (minTotal || maxTotal) {
       query.totalPrice = {};
       if (minTotal) query.totalPrice.$gte = Number(minTotal);
       if (maxTotal) query.totalPrice.$lte = Number(maxTotal);
     }
+
     if (from || to) {
       query.createdAt = {};
       if (from) query.createdAt.$gte = new Date(from);
@@ -82,14 +79,31 @@ const getAllOrders = async (req, res, next) => {
         : "-createdAt";
 
     const [orders, total] = await Promise.all([
-      Order.find(query).sort(sortSpec).skip(skip).limit(limitNum).exec(),
+      Order.find(query)
+        .populate({
+          path: "detail.product",
+        })
+        .populate({
+          path: "userID",
+          select: "email information.firstName information.lastName", // optional: populate user info
+        })
+        .populate({
+          path: "coupon",
+          select: "code discountType discountValue", // optional: populate coupon info
+        })
+        .sort(sortSpec)
+        .skip(skip)
+        .limit(limitNum)
+        .exec(),
       Order.countDocuments(query).exec(),
     ]);
+
     if (!orders || orders.length === 0) {
       const err = new Error("No Orders found");
       err.statusCode = 204;
       return next(err);
     }
+
     return res.status(200).json({
       message: "Get all orders successfully",
       count: orders.length,
@@ -243,57 +257,79 @@ const createOrder = async (req, res, next) => {
     const shippingPriceNum = Number(shippingPrice ?? 0);
     const taxPriceNum = Number(taxPrice ?? 0);
 
-    // Handle discount object
-    const discountObj = discount || { percent: 0, amount: 0 };
-    const discountPercent = Number(discountObj.percent ?? 0);
-    const discountAmount = Number(discountObj.amount ?? 0);
+    // update coupon
+    let couponId;
+    if (coupon) {
+      if (!mongoose.Types.ObjectId.isValid(coupon)) {
+        const err = new Error("Invalid coupon format");
+        err.statusCode = 400;
+        return next(err);
+      }
+      couponId = coupon;
+
+      const foundCoupon = await Coupon.findById(couponId).exec();
+      foundCoupon.usageCount = foundCoupon.usageCount + 1;
+      if (foundCoupon.usageLimit <= foundCoupon.usageCount) {
+        foundCoupon.isActive = false;
+      }
+      await foundCoupon.save();
+    }
 
     // Calculate totalPrice
     let totalPriceNum;
     if (totalPrice) {
       totalPriceNum = Number(totalPrice);
     } else {
-      // Calculate based on discount type
-      if (discountPercent > 0) {
-        const discountValue = (discountPercent / 100) * subTotalNum;
-        totalPriceNum = Number(
-          (
-            subTotalNum -
-            discountValue +
-            shippingPriceNum +
-            taxPriceNum
-          ).toFixed(2)
-        );
-      } else if (discountAmount > 0) {
-        totalPriceNum = Number(
-          (
-            subTotalNum -
-            discountAmount +
-            shippingPriceNum +
-            taxPriceNum
-          ).toFixed(2)
-        );
+      if (coupon) {
+        const foundCoupon = await Coupon.findById(coupon).exec();
+        if (foundCoupon.discountType === "percentage") {
+          const discountValue =
+            (foundCoupon.discountValue / 100) * this.subTotal;
+          return Number(
+            (
+              subTotalNum -
+              discountValue +
+              shippingPriceNum +
+              taxPriceNum
+            ).toFixed(2)
+          );
+        } else if (foundCoupon.discountType === "fixed") {
+          const discountValue = foundCoupon.discountValue;
+          return Number(
+            (
+              subTotalNum -
+              discountValue +
+              shippingPriceNum +
+              taxPriceNum
+            ).toFixed(2)
+          );
+        }
       } else {
-        totalPriceNum = Number(
+        return Number(
           (subTotalNum + shippingPriceNum + taxPriceNum).toFixed(2)
         );
       }
     }
 
-    console.log("detailFormat:", detailFormat);
-    console.log("deliverAddress:", deliverAddress);
     const newOrder = new Order({
       userID,
       totalItem: totalItemNum,
       detail: detailFormat,
       deliverAddress,
+      status: {
+        statusHistory: [
+          {
+            status: "OrderPlaced",
+            date: new Date(),
+            description: "Order confirmed and payment processed",
+          },
+        ],
+        currentStatus: "OrderPlaced",
+      },
       subTotal: subTotalNum,
       shippingPrice: shippingPriceNum,
       taxPrice: taxPriceNum,
-      discount: {
-        percent: discountPercent,
-        amount: discountAmount,
-      },
+      discount,
       coupon: couponId,
       totalPrice: totalPriceNum,
     });
@@ -319,40 +355,23 @@ const createOrder = async (req, res, next) => {
         }
       );
     }
-    // update coupon
-    let couponId;
-    if (coupon) {
-      if (!mongoose.Types.ObjectId.isValid(coupon)) {
-        const err = new Error("Invalid coupon format");
-        err.statusCode = 400;
-        return next(err);
-      }
-      couponId = coupon;
 
-      const foundCoupon = await Coupon.findById({ _id: couponId }).exec();
-      foundCoupon.usageCount = foundCoupon.usageCount + 1;
-      if (foundCoupon.usageLimit <= foundCoupon.usageCount) {
-        foundCoupon.isActive = false;
-      }
-      await foundCoupon.save();
+    // update UserCoupon
+    const foundUserCoupon = await UserCoupon.findOne({
+      userID,
+      couponID: couponId,
+    }).exec();
 
-      // update UserCoupon
-      const foundUserCoupon = await UserCoupon.find({
-        userID,
-        couponID: couponId,
-      }).exec();
-
-      if (foundUserCoupon) {
-        foundUserCoupon.usageCount += 1; // update usageCount
-        foundUserCoupon.status =
-          foundUserCoupon.usageCount >= foundUserCoupon.userUsageLimit
-            ? "used"
-            : foundUserCoupon.status; // update status
-        foundUserCoupon.used = [
-          ...foundUserCoupon.used,
-          { usedAt: new Date(), orderID: savedOrder._id },
-        ];
+    if (foundUserCoupon) {
+      foundUserCoupon.usageCount += 1;
+      foundUserCoupon.used.push({
+        usedAt: new Date(),
+        orderID: savedOrder._id,
+      });
+      if (foundUserCoupon.usageCount >= foundUserCoupon.userUsageLimit) {
+        foundUserCoupon.status = "used";
       }
+      await foundUserCoupon.save();
     }
 
     res.status(201).json({
@@ -501,7 +520,111 @@ const updateOrderByOrderId = async (req, res, next) => {
   }
 };
 
-const deleteOrderByOrderId = async (req, res, next) => {
+// update order status by order id
+const updateOrderStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status, description } = req.body;
+
+    if (!id || id === ":id") {
+      const err = new Error("id parameter is required");
+      err.statusCode = 400;
+      return next(err);
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      const err = new Error("Invalid order id format");
+      err.statusCode = 400;
+      return next(err);
+    }
+    if (!status) {
+      const err = new Error("status is required");
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    const validStatuses = ["OrderPlaced", "Processing", "Shipped", "Delivered"];
+    if (!validStatuses.includes(status)) {
+      const err = new Error(
+        `Invalid status. Must be one of: ${validStatuses.join(", ")}`
+      );
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    const foundOrder = await Order.findById(id).exec();
+    if (!foundOrder) {
+      const err = new Error("Order not found");
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    // Check if status is actually changing
+    if (foundOrder.status.currentStatus === status) {
+      return res.status(200).json({
+        message: "Order status unchanged",
+        order: foundOrder,
+      });
+    }
+
+    // Add new entry to statusHistory
+    foundOrder.status.statusHistory.push({
+      status,
+      date: new Date(),
+      description: description || `Order status updated to ${status}`,
+    });
+
+    // Update currentStatus
+    foundOrder.status.currentStatus = status;
+
+    const savedOrder = await foundOrder.save();
+
+    return res.status(200).json({
+      message: "Order status updated successfully",
+      order: savedOrder,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const softDeleteOrderByOrderId = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id || id === ":id") {
+      const err = new Error("id parameter is required");
+      err.statusCode = 400;
+      return next(err);
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      const err = new Error("Invalid order id format");
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    const softDeletedOrder = await Order.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          cancel: true,
+        },
+      },
+      { new: true }
+    );
+    if (!softDeletedOrder) {
+      const err = new Error("Order not found");
+      err.statusCode = 404;
+      return next(err);
+    }
+    return res.status(200).json({
+      message: "Soft deleted order successfully",
+      order: softDeletedOrder,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const hardDeleteOrderByOrderId = async (req, res, next) => {
   try {
     const { id } = req.params;
     if (!id || id === ":id") {
@@ -529,11 +652,12 @@ const deleteOrderByOrderId = async (req, res, next) => {
     next(err);
   }
 };
-
 module.exports = {
   getAllOrders,
   getOrderByOrderId,
   createOrder,
   updateOrderByOrderId,
-  deleteOrderByOrderId,
+  updateOrderStatus,
+  softDeleteOrderByOrderId,
+  hardDeleteOrderByOrderId,
 };

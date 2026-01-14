@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { User } = require("./User.js");
+const { Coupon } = require("./Coupon.js");
 const { nanoid } = require("nanoid");
 const { generateID } = require("../utils/generateID.js");
 
@@ -16,7 +17,7 @@ const orderSchema = new mongoose.Schema({
     enum: ["credit card", "paypal", "bank transfer", "cash"],
     required: true,
     set: function (value) {
-      const allowed = ["credit card", "paypal", "bank transfer", "cash"];
+      const allowed = ["credit card", "paypal", "bank transfer", "cash", "qr"];
       if (!allowed.includes(value)) {
         throw new Error("Invalid payment method");
       }
@@ -42,7 +43,8 @@ const orderSchema = new mongoose.Schema({
         required: [true, "size when chosen product is required"],
       },
       quantity: { type: Number, required: true, min: 1 },
-      discountProduct: { type: Number, default: 0, min: 0, max: 100 }, // discount of product at the time of order
+
+      discountProduct: { type: Number, default: 0, min: 0, max: 100 }, // discount of product always be percentage
       price: { type: Number, required: true, min: 0 }, //price * quantity
       totalPrice: { type: Number, required: true, min: 0 }, // price after discountProduct applied
     },
@@ -80,14 +82,27 @@ const orderSchema = new mongoose.Schema({
     },
   },
   status: {
-    pass: {
-      type: [String],
-      enum: ["orderPlaced", "processing", "shipped", "delivered"],
-      default: ["orderPlaced"],
-    },
-    current: {
-      type: [String],
-      enum: ["orderPlaced", "processing", "shipped", "delivered"],
+    statusHistory: [
+      {
+        status: {
+          type: String,
+          enum: ["OrderPlaced", "Processing", "Shipped", "Delivered"],
+          required: true,
+        },
+        date: {
+          type: Date,
+          default: Date.now,
+        },
+        description: {
+          type: String,
+          default: "",
+        },
+      },
+    ],
+    currentStatus: {
+      type: String,
+      enum: ["OrderPlaced", "Processing", "Shipped", "Delivered"],
+      default: "OrderPlaced",
     },
   },
   cancel: { type: Boolean, default: false },
@@ -176,6 +191,7 @@ orderSchema.pre("save", async function (next) {
     }
   }
 });
+
 const Order = mongoose.model("Order", orderSchema);
 
 module.exports = { Order };
