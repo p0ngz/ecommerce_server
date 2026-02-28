@@ -8,18 +8,19 @@ router
   .get(productController.getAllProducts)
   .post(
     productUploader.single("productImg"),
-    productController.createNewProduct
+    productController.createNewProduct,
   );
 
 // router.get("/type/:type", productController.getProductByType);
 router.get("/type", productController.getTypeProduct);
+router.get("/price/max", productController.getMaxPrice);
 router.get("/newest", productController.getNewestProduct);
 router.get("/top", productController.getTopProduct);
 router.get("/rating", productController.getTopRatingProduct);
 router.put(
   "/:id/image",
   productUploader.single("productImg"),
-  productController.updateProductImageById
+  productController.updateProductImageById,
 );
 
 router
@@ -27,11 +28,10 @@ router
   .get(productController.getProductById)
   .put(
     productUploader.single("productImg"),
-    productController.updateProductById
+    productController.updateProductById,
   )
   .delete(productController.deleteProductById);
 
 router.delete("/:id/hard", productController.hardDeleteProductById);
-
 
 module.exports = router;

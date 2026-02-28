@@ -12,7 +12,7 @@ const getAllProducts = async (req, res, next) => {
       priceMax,
       color,
       size,
-      inStock,
+      stock, // "inStock" | "outOfStock"
       search,
       from, // createdAt from (ISO date) - no default
       to, // createdAt to (ISO date) - no default
@@ -50,8 +50,10 @@ const getAllProducts = async (req, res, next) => {
           ? [size.toUpperCase()]
           : null;
 
-    if (inStock) {
-      query["variants.inStock"] = { $gte: 0 };
+    if (stock === "inStock") {
+      query.variants = { $elemMatch: { inStock: { $gt: 0 } } };
+    } else if (stock === "outOfStock") {
+      query.variants = { $not: { $elemMatch: { inStock: { $gt: 0 } } } };
     }
     if (search) {
       query.productName = { $regex: search, $options: "i" };
@@ -61,7 +63,6 @@ const getAllProducts = async (req, res, next) => {
       if (from) query.createdAt.$gte = new Date(from);
       if (to) query.createdAt.$lte = new Date(to);
     }
-    const inStockNum = inStock !== undefined ? Number(inStock) : null;
     const pageRaw = typeof page === "string" ? page.trim() : page;
     const limitRaw = typeof limit === "string" ? limit.trim() : limit;
     const pageParsed = Number(pageRaw);
@@ -96,9 +97,7 @@ const getAllProducts = async (req, res, next) => {
               $and: [
                 ...(colors ? [{ $in: ["$$v.color", colors] }] : []),
                 ...(sizes ? [{ $in: ["$$v.size", sizes] }] : []),
-                ...(inStockNum !== null
-                  ? [{ $gte: ["$$v.inStock", inStockNum] }]
-                  : []),
+                ...(stock === "inStock" ? [{ $gt: ["$$v.inStock", 0] }] : []),
               ],
             },
           },
@@ -564,10 +563,24 @@ const updateProductImageById = async (req, res, next) => {
     next(err);
   }
 };
+const getMaxPrice = async (req, res, next) => {
+  try {
+    const result = await Product.aggregate([
+      { $group: { _id: null, maxPrice: { $max: "$price" } } },
+      { $project: { _id: 0, maxPrice: 1 } },
+    ]);
+    const maxPrice = result[0]?.maxPrice ?? 0;
+    res.status(200).json({ maxPrice });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
   getTypeProduct,
+  getMaxPrice,
   createNewProduct,
   updateProductById,
   deleteProductById,
