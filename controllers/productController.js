@@ -41,14 +41,14 @@ const getAllProducts = async (req, res, next) => {
       Array.isArray(color) && color.length > 0
         ? color.map((c) => c.toLowerCase())
         : color
-        ? [color.toLowerCase()]
-        : null;
+          ? [color.toLowerCase()]
+          : null;
     const sizes =
       Array.isArray(size) && size.length > 0
         ? size.map((s) => s.toUpperCase())
         : size
-        ? [size.toUpperCase()]
-        : null;
+          ? [size.toUpperCase()]
+          : null;
 
     if (inStock) {
       query["variants.inStock"] = { $gte: 0 };
@@ -173,6 +173,31 @@ const getProductById = async (req, res, next) => {
   }
 };
 
+// get type product
+const getTypeProduct = async (req, res, next) => {
+  try {
+    const typeProducts = await Product.aggregate([
+      {
+        $group: {
+          _id: "$typeProduct",
+          total: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          type: "$_id",
+          total: 1,
+        },
+      },
+      { $sort: { type: 1 } },
+    ]);
+    res.status(200).json({ typeProducts });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // create new product
 const createNewProduct = async (req, res, next) => {
   try {
@@ -197,7 +222,7 @@ const createNewProduct = async (req, res, next) => {
 
     if (!productName || !typeProduct || !description || !price) {
       const err = new Error(
-        "productName, productImage, typeProduct,  description, and price  are required"
+        "productName, productImage, typeProduct,  description, and price  are required",
       );
       err.statusCode = 400;
       return next(err);
@@ -211,7 +236,7 @@ const createNewProduct = async (req, res, next) => {
       }
       if (variant.inStock < 0) {
         const err = new Error(
-          "variants inStock must be greater than or equal to 0"
+          "variants inStock must be greater than or equal to 0",
         );
         err.statusCode = 400;
         throw err;
@@ -288,7 +313,7 @@ const updateProductById = async (req, res, next) => {
       }
       if (variant.inStock < 0) {
         const err = new Error(
-          "variants inStock must be greater than or equal to 0"
+          "variants inStock must be greater than or equal to 0",
         );
         err.statusCode = 400;
         throw err;
@@ -350,7 +375,7 @@ const deleteProductById = async (req, res, next) => {
     const updatedDeleteProduct = await Product.findByIdAndUpdate(
       { _id: id },
       updateDeleteProduct,
-      { new: true }
+      { new: true },
     ).exec();
     if (!updatedDeleteProduct) {
       const err = new Error("Not found product with id: " + id);
@@ -389,28 +414,6 @@ const hardDeleteProductById = async (req, res, next) => {
   }
 };
 
-// get product by types
-// earring, necklace, ring, bracelet
-// const getProductByType = async (req, res, next) => {
-//   try {
-//     const { type } = req.params;
-//     if (!type || type === ":type") {
-//       const err = new Error("type parameter is required");
-//       err.statusCode = 400;
-//       return next(err);
-//     }
-//     const formatType = type.toLowerCase();
-//     const productFromType = await Product.find({ typeProduct: formatType });
-//     if (!productFromType || productFromType.length === 0) {
-//       const err = new Error("No products found for type: " + type);
-//       err.statusCode = 404;
-//       return next(err);
-//     }
-//     return res.status(200).json(productFromType);
-//   } catch (err) {
-//     next(err);
-//   }
-// };
 const getNewestProduct = async (req, res, next) => {
   try {
     const { limit } = req.query;
@@ -540,7 +543,7 @@ const updateProductImageById = async (req, res, next) => {
       __dirname,
       "..",
       "public",
-      productById.productImg
+      productById.productImg,
     );
     if (fs.existsSync(oldImagePath)) {
       fs.unlinkSync(oldImagePath);
@@ -564,10 +567,10 @@ const updateProductImageById = async (req, res, next) => {
 module.exports = {
   getAllProducts,
   getProductById,
+  getTypeProduct,
   createNewProduct,
   updateProductById,
   deleteProductById,
-  // getProductByType,
   getNewestProduct,
   getTopProduct,
   getTopRatingProduct,

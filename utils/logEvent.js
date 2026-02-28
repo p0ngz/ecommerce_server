@@ -11,9 +11,7 @@ const logEvent = async (message, dirName, fileName) => {
 
   try {
     const dirPath = path.join(__dirname, "..", dirName);
-    // console.log(path.join(__dirname));
-    // console.log(path.join(__dirname, ".."));
-    // console.log(dirPath);
+
 
     if (!fs.existsSync(dirPath)) {
       console.log("Directory does not exist, creating it...");
