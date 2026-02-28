@@ -11,7 +11,7 @@ const getAllProducts = async (req, res, next) => {
       priceMin = 0,
       priceMax,
       color,
-      size,
+      size="All",
       stock, // "inStock" | "outOfStock"
       search,
       from, // createdAt from (ISO date) - no default
@@ -43,12 +43,12 @@ const getAllProducts = async (req, res, next) => {
         : color
           ? [color.toLowerCase()]
           : null;
-    const sizes =
-      Array.isArray(size) && size.length > 0
-        ? size.map((s) => s.toUpperCase())
-        : size
-          ? [size.toUpperCase()]
-          : null;
+    const rawSizes = Array.isArray(size)
+      ? size.map((s) => s.toUpperCase()).filter((s) => s !== "ALL")
+      : size && size.toUpperCase() !== "ALL"
+        ? [size.toUpperCase()]
+        : [];
+    const sizes = rawSizes.length > 0 ? rawSizes : null;
 
     if (stock === "inStock") {
       query.variants = { $elemMatch: { inStock: { $gt: 0 } } };
@@ -583,6 +583,26 @@ const getAllColors = async (req, res, next) => {
   }
 };
 
+const getAllSizes = async (req, res, next) => {
+  try {
+    const { typeProduct } = req.query;
+    const matchStage = typeProduct
+      ? { $match: { typeProduct: typeProduct.toLowerCase() } }
+      : { $match: {} };
+    const result = await Product.aggregate([
+      matchStage,
+      { $unwind: "$variants" },
+      { $group: { _id: "$variants.size" } },
+      { $sort: { _id: 1 } },
+      { $project: { _id: 0, size: "$_id" } },
+    ]);
+    const sizes = result.map((r) => r.size);
+    res.status(200).json({ sizes });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const getMaxPrice = async (req, res, next) => {
   try {
     const result = await Product.aggregate([
@@ -602,6 +622,7 @@ module.exports = {
   getTypeProduct,
   getMaxPrice,
   getAllColors,
+  getAllSizes,
   createNewProduct,
   updateProductById,
   deleteProductById,

@@ -15,6 +15,7 @@ router
 router.get("/type", productController.getTypeProduct);
 router.get("/price/max", productController.getMaxPrice);
 router.get("/colors", productController.getAllColors);
+router.get("/sizes", productController.getAllSizes);
 router.get("/newest", productController.getNewestProduct);
 router.get("/top", productController.getTopProduct);
 router.get("/rating", productController.getTopRatingProduct);
