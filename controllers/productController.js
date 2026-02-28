@@ -563,6 +563,26 @@ const updateProductImageById = async (req, res, next) => {
     next(err);
   }
 };
+const getAllColors = async (req, res, next) => {
+  try {
+    const { typeProduct } = req.query;
+    const matchStage = typeProduct
+      ? { $match: { typeProduct: typeProduct.toLowerCase() } }
+      : { $match: {} };
+    const result = await Product.aggregate([
+      matchStage,
+      { $unwind: "$variants" },
+      { $group: { _id: "$variants.color" } },
+      { $sort: { _id: 1 } },
+      { $project: { _id: 0, color: "$_id" } },
+    ]);
+    const colors = result.map((r) => r.color);
+    res.status(200).json({ colors });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const getMaxPrice = async (req, res, next) => {
   try {
     const result = await Product.aggregate([
@@ -581,6 +601,7 @@ module.exports = {
   getProductById,
   getTypeProduct,
   getMaxPrice,
+  getAllColors,
   createNewProduct,
   updateProductById,
   deleteProductById,
