@@ -34,6 +34,7 @@ router
   )
   .delete(productController.deleteProductById);
 
+router.get("/:id/related", productController.getRelateProduct);
 router.delete("/:id/hard", productController.hardDeleteProductById);
 
 module.exports = router;

@@ -11,7 +11,7 @@ const getAllProducts = async (req, res, next) => {
       priceMin = 0,
       priceMax,
       color,
-      size="All",
+      size = "All",
       stock, // "inStock" | "outOfStock"
       search,
       from, // createdAt from (ISO date) - no default
@@ -32,29 +32,41 @@ const getAllProducts = async (req, res, next) => {
       if (priceMax) query.price.$lte = Number(priceMax);
     }
 
-    if (Array.isArray(color) && color.length > 0) {
-      query["variants.color"] = {
-        $in: color.map((color) => color.toLowerCase()),
-      };
-    }
-    const colors =
-      Array.isArray(color) && color.length > 0
-        ? color.map((c) => c.toLowerCase())
-        : color
-          ? [color.toLowerCase()]
-          : null;
-    const rawSizes = Array.isArray(size)
-      ? size.map((s) => s.toUpperCase()).filter((s) => s !== "ALL")
-      : size && size.toUpperCase() !== "ALL"
-        ? [size.toUpperCase()]
-        : [];
-    const sizes = rawSizes.length > 0 ? rawSizes : null;
+    // Normalize to array — supports ?color=gold,silver or ?color=gold&color=silver
+    const normalizeParam = (param) => {
+      if (!param) return [];
+      const arr = Array.isArray(param) ? param : [param];
+      return arr
+        .flatMap((v) => v.split(",").map((s) => s.trim()))
+        .filter(Boolean);
+    };
 
-    if (stock === "inStock") {
-      query.variants = { $elemMatch: { inStock: { $gt: 0 } } };
-    } else if (stock === "outOfStock") {
-      query.variants = { $not: { $elemMatch: { inStock: { $gt: 0 } } } };
+    const colors = normalizeParam(color).map((c) => c.toLowerCase());
+    const rawSizes = normalizeParam(size)
+      .map((s) => s.toUpperCase())
+      .filter((s) => s !== "ALL");
+    const sizes = rawSizes.length > 0 ? rawSizes : null;
+    const colorsFiltered = colors.length > 0 ? colors : null;
+
+    // Build $elemMatch to ensure color + size exist on the SAME variant
+    const variantMatch = {};
+    if (colorsFiltered) variantMatch.color = { $in: colorsFiltered };
+    if (sizes) variantMatch.size = { $in: sizes };
+    if (stock === "inStock") variantMatch.inStock = { $gt: 0 };
+
+    if (stock === "outOfStock") {
+      const conditions = [];
+      if (Object.keys(variantMatch).length > 0) {
+        conditions.push({ variants: { $elemMatch: variantMatch } });
+      }
+      conditions.push({
+        variants: { $not: { $elemMatch: { inStock: { $gt: 0 } } } },
+      });
+      query.$and = conditions;
+    } else if (Object.keys(variantMatch).length > 0) {
+      query.variants = { $elemMatch: variantMatch };
     }
+
     if (search) {
       query.productName = { $regex: search, $options: "i" };
     }
@@ -95,7 +107,9 @@ const getAllProducts = async (req, res, next) => {
             as: "v",
             cond: {
               $and: [
-                ...(colors ? [{ $in: ["$$v.color", colors] }] : []),
+                ...(colorsFiltered
+                  ? [{ $in: ["$$v.color", colorsFiltered] }]
+                  : []),
                 ...(sizes ? [{ $in: ["$$v.size", sizes] }] : []),
                 ...(stock === "inStock" ? [{ $gt: ["$$v.inStock", 0] }] : []),
               ],
@@ -123,8 +137,6 @@ const getAllProducts = async (req, res, next) => {
       Product.aggregate(pipeline),
       Product.aggregate([matchStage, { $count: "total" }]),
     ]);
-    console.log("products: ", products);
-    console.log("totalResult: ", totalResult);
     const total = totalResult[0]?.total || 0;
     if (!products || products.length === 0) {
       const err = new Error("No Products found");
@@ -616,9 +628,50 @@ const getMaxPrice = async (req, res, next) => {
   }
 };
 
+const getRelateProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { limit = 8 } = req.query;
+
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      const err = new Error("Invalid product id");
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    const product = await Product.findById(id).select("typeProduct").lean();
+    if (!product) {
+      const err = new Error("Product not found");
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    const limitNum =
+      Number.isFinite(Number(limit)) && Number(limit) > 0 ? Number(limit) : 8;
+
+    const relatedProducts = await Product.find({
+      typeProduct: product.typeProduct,
+      _id: { $ne: new mongoose.Types.ObjectId(id) },
+    })
+      .select(
+        "productID productName productImg typeProduct rating price discount variants createdAt",
+      )
+      .sort("-createdAt")
+      .limit(limitNum)
+      .lean();
+
+    res
+      .status(200)
+      .json({ count: relatedProducts.length, products: relatedProducts });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
+  getRelateProduct,
   getTypeProduct,
   getMaxPrice,
   getAllColors,
